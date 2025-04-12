@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Día Preventivo - IAPOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="script.js" defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2B6CB0',
+                        secondary: '#38A169',
+                        accent: '#D53F8C',
+                        warning: '#DD6B20',
+                        info: '#4299E1'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        .floating-label {
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+        input:focus + .floating-label,
+        input:not(:placeholder-shown) + .floating-label {
+            transform: translateY(-180%) scale(0.9);
+            background-color: white;
+            padding: 0 4px;
+            color: #2B6CB0;
+        }
+        textarea:focus + .floating-label,
+        textarea:not(:placeholder-shown) + .floating-label {
+            transform: translateY(-180%) scale(0.9);
+            background-color: white;
+            padding: 0 4px;
+            color: #2B6CB0;
+        }
+        .recommendation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .date-mask::after {
+            content: "DDMMAA";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .date-mask input:focus::after,
+        .date-mask input:not(:placeholder-shown)::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-blue-50 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <div class="bg-primary text-white p-3 rounded-full mr-4">
+                            <i class="fas fa-shield-virus text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800">Día Preventivo</h1>
+                            <p class="text-sm text-gray-600">Programa de Salud Preventiva - IAPOS</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden md:flex items-center space-x-2 bg-blue-100 px-4 py-2 rounded-full">
+                            <i class="fas fa-user-md text-primary"></i>
+                            <span class="text-sm font-medium">Salud Preventiva</span>
+                        </div>
+                        <button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition duration-300">
+                            <i class="fas fa-user-circle mr-2"></i> Acceso Profesionales
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="bg-white shadow-sm">
+            <div class="container mx-auto px-4">
+                <div class="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div id="formProgress" class="h-full progress-bar bg-primary" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div id="formSection" class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div id="welcomeScreen" class="p-8 text-center">
+                        <div class="bg-blue-100 p-6 rounded-full inline-flex items-center justify-center mb-6">
+                            <i class="fas fa-heartbeat text-primary text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Bienvenido a Día Preventivo</h2>
+                        <p class="text-gray-600 mb-6">Complete este cuestionario de salud para recibir recomendaciones preventivas personalizadas basadas en la evidencia científica actual.</p>
+                        <p class="text-gray-500 mb-8">Este programa le permitirá conocer qué estudios preventivos son recomendables para usted según su edad, sexo y factores de riesgo.</p>
+                        <button id="startQuestionnaireButton" class="bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium text-lg transition duration-300">
+                            Comenzar Cuestionario <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+
+                    <div id="mainForm" class="hidden p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">Cuestionario de Salud Preventiva</h2>
+
+                        <div id="identificationInfo" class="form-step mb-10">
+                            <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">1</span>
+                                Identificación
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="relative">
+                                    <input type="text" id="dni" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" " pattern="\d{7,8}" maxlength="8">
+                                    <label for="dni" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">DNI</label>
+                                </div>
+                                <div class="relative date-mask">
+                                    <input type="text" id="birthDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" " maxlength="10" pattern="\d{2}/\d{2}/\d{4}">
+                                    <label for="birthDate" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Fecha de nacimiento</label>
+                                </div>
+                                <div class="relative">
+                                    <input type="text" id="age" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-gray-100" readonly>
+                                    <label for="age" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Edad calculada</label>
+                                </div>
+                                <div class="relative">
+                                    <input type="text" id="fullName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" ">
+                                    <label for="fullName" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Nombre completo</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="personalInfo" class="form-step mb-10">
+                            <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">2</span>
+                                Información Personal
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Sexo biológico</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="biologicalSex" value="masculino" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Masculino</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="biologicalSex" value="femenino" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Femenino</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Género autopercibido</label>
+                                    <select id="genderIdentity" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <option value="masculino">Masculino</option>
+                                        <option value="femenino">Femenino</option>
+                                        <option value="no-binario">No binario</option>
+                                        <option value="otro">Otro</option>
+                                        <option value="prefiero-no-decir">Prefiero no decir</option>
+                                    </select>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="height" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" ">
+                                    <label for="height" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Altura (cm)</label>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="weight" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" ">
+                                    <label for="weight" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Peso (kg)</label>
+                                </div>
+                                <div class="md:col-span-2 bg-blue-50 p-4 rounded-lg">
+                                    <p class="text-sm text-gray-600 mb-2"><i class="fas fa-info-circle text-primary mr-2"></i>Con tu altura y peso calcularemos automáticamente tu Índice de Masa Corporal (IMC)</p>
+                                    <div class="flex items-center">
+                                        <span class="font-medium mr-2">Tu IMC:</span>
+                                        <span id="bmiValue" class="font-bold text-primary">--</span>
+                                        <span id="bmiCategory" class="ml-2 text-sm px-2 py-1 rounded-full"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="healthConditions" class="form-step mb-10">
+                            <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">3</span>
+                                Condiciones de Salud Conocidas
+                            </h3>
+                            <p class="text-gray-600 mb-6">Por favor, indique si conoce tener alguna de las siguientes condiciones. Marque "No lo sé" si no ha sido evaluado.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Hipertensión arterial</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="hypertension" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="hypertension" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="hypertension" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Diabetes</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="diabetes" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="diabetes" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="diabetes" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Colesterol alto</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cholesterol" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cholesterol" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cholesterol" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Depresión</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="depression" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="depression" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="depression" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Antecedentes de cáncer de colon</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="colonCancer" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="colonCancer" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="colonCancer" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Antecedentes de cáncer de mama</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="breastCancer" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="breastCancer" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="breastCancer" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Antecedentes de cáncer de cuello uterino</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cervicalCancer" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cervicalCancer" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="cervicalCancer" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="prostateCancerQuestion">
+                                    <label class="block text-gray-700 mb-2">Antecedentes de cáncer de próstata</label>
+                                    <div class="flex space-x-4">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="prostateCancer" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="prostateCancer" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="prostateCancer" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="contactInfo" class="form-step mb-10">
+                            <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">4</span>
+                                Información de Contacto
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="relative">
+                                    <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" ">
+                                    <label for="email" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Correo electrónico</label>
+                                </div>
+                                <div class="relative">
+                                    <input type="tel" id="phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" ">
+                                    <label for="phone" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Teléfono</label>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-gray-700 mb-2">¿Desea recibir recordatorios de estudios preventivos?</label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="reminders" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí, por correo</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="reminders" value="si-sms" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí, por SMS</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="reminders" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No, gracias</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="habitsInfo" class="form-step mb-10">
+                            <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                                <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">5</span>
+                                Hábitos y Estilo de Vida
+                            </h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">¿Fuma actualmente?</label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="smoking" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="smoking" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="smoking" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Consumo de alcohol</label>
+                                    <select id="alcoholConsumption" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <option value="nunca">Nunca</option>
+                                        <option value="ocasional">Ocasional</option>
+                                        <option value="regular">Regular</option>
+                                        <option value="diario">Diario</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Actividad física semanal</label>
+                                    <select id="physicalActivity" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <option value="ninguna">Ninguna</option>
+                                        <option value="1-2 veces">1-2 veces</option>
+                                        <option value="3-4 veces">3-4 veces</option>
+                                        <option value="5+ veces">5+ veces</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">¿abusa de algun tipo de drogas o farmacos?</label>
+                                    <div class="flex space-x-6">
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="drugUse" value="si" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">Sí</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="drugUse" value="no" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No</span>
+                                        </label>
+                                        <label class="inline-flex items-center">
+                                            <input type="radio" name="drugUse" value="no lo se" class="h-5 w-5 text-primary focus:ring-primary border-gray-300">
+                                            <span class="ml-2">No lo sé</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Dieta habitual</label>
+                                    <select id="diet" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <option value="equilibrada">Equilibrada</option>
+                                        <option value="alta-grasas">Alta en grasas</option>
+                                        <option value="alta-azucar">Alta en azúcar</option>
+                                        <option value="vegetariana">Vegetariana</option>
+                                        <option value="vegana">Vegana</option>
+                                        <option value="otra">Otra</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Otras condiciones de salud</label>
+                                    <textarea id="otherConditions" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary peer" placeholder=" "></textarea>
+                                    <label for="otherConditions" class="floating-label absolute left-4 top-1/2 text-gray-500 pointer-events-none">Descríbalas aquí</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end mt-8">
+                            <button id="saveButton" class="bg-secondary hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium text-lg transition duration-300">
+                                Guardar y Continuar <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                        <div class="mt-10 flex justify-between">
+                            <button id="prevBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium hidden">
+                                <i class="fas fa-arrow-left mr-2"></i> Anterior
+                            </button>
+                            <button id="nextBtn" class="bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium ml-auto">
+                                Siguiente <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    
+                        <div id="resultsSection" class="hidden max-w-6xl mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                                <div class="bg-primary p-8 text-center text-white">
+                                    <h2 class="text-3xl font-bold mb-4">Recomendaciones Preventivas Personalizadas</h2>
+                                    <p class="text-blue-100">Basado en sus datos y en las guías clínicas internacionales más actualizadas</p>
+                                </div>
+                                
+                                <div class="p-8">
+                                    <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                                        <div class="flex flex-col md:flex-row justify-between items-center">
+                                            <div>
+                                                <h3 class="text-xl font-semibold text-gray-800 mb-2" id="resultName">Nombre del usuario</h3>
+                                                <div class="flex flex-wrap gap-4 text-sm">
+                                                    <span><i class="fas fa-id-card text-primary mr-1"></i> <span id="resultDNI">--</span></span>
+                                                    <span><i class="fas fa-birthday-cake text-primary mr-1"></i> <span id="resultAge">--</span> años</span>
+                                                    <span><i class="fas fa-venus-mars text-primary mr-1"></i> <span id="resultSex">--</span></span>
+                                                    <span><i class="fas fa-ruler-vertical text-primary mr-1"></i> <span id="resultHeight">--</span> cm</span>
+                                                    <span><i class="fas fa-weight text-primary mr-1"></i> <span id="resultWeight">--</span> kg</span>
+                                                    <span><i class="fas fa-calculator text-primary mr-1"></i> IMC: <span id="resultBMI">--</span> (<span id="resultBMICategory">--</span>)</span>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 md:mt-0">
+                                                <button onclick="printRecommendations()" class="bg-white hover:bg-gray-100 text-primary border border-primary px-4 py-2 rounded-lg mr-2">
+                                                    <i class="fas fa-print mr-2"></i> Imprimir
+                                                </button>
+                                                <button onclick="saveRecommendations()" class="bg-secondary hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                                                    <i class="fas fa-save mr-2"></i> Guardar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-8">
+                                    <!-- Vaccines -->
+                                    <div class="recommendation-card bg-white border border-gray-200 rounded-lg p-6 transition-all duration-300">
+                                        <div class="flex items-start mb-4">
+                                            <div class="bg-blue-100 p-3 rounded-full mr-4">
+                                                <i class="fas fa-syringe text-primary text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-xl font-semibold text-gray-800">Vacunación Recomendada</h3>
+                                                <p class="text-sm text-gray-600">Según su edad y factores de riesgo</p>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start p-4 bg-blue-50 rounded-lg">
+                                                <i class="fas fa-check-circle text-secondary mt-1 mr-3"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Vacuna contra la gripe (influenza)</h4>
+                                                    <p class="text-sm text-gray-600">Anual. Recomendada para todos los adultos.</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start p-4 bg-blue-50 rounded-lg">
+                                                <i class="fas fa-check-circle text-secondary mt-1 mr-3"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Vacuna contra el COVID-19</h4>
+                                                    <p class="text-sm text-gray-600">Dosis de refuerzo anual según calendario vigente.</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start p-4 bg-blue-50 rounded-lg">
+                                                <i class="fas fa-check-circle text-secondary mt-1 mr-3"></i>
+                                                <div>
+                                                    <h4 class="font-medium">Vacuna contra el neumococo</h4>
+                                                    <p class="text-sm text-gray-600">Una dosis de PCV13 seguida de PPSV23 con un año de diferencia.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- Cancer Screening -->
+                            <div class="recommendation-card bg-white border border-gray-200 rounded-lg p-6 transition-all duration-300">
+                                <div class="flex items-start mb-4">
+                                    <div class="bg-pink-100 p-3 rounded-full mr-4">
+                                        <i class="fas fa-microscope text-accent text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">Detección Temprana de Cáncer</h3>
+                                        <p class="text-sm text-gray-600">Estudios de screening según su perfil</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div id="mammogramAdvice" class="hidden flex items-start p-4 bg-pink-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-accent mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Mamografía bianual</h4>
+                                            <p class="text-sm text-gray-600">Recomendada para mujeres de 50 a 74 años. Si tiene antecedentes familiares de cáncer de mama, podría requerir inicio más temprano.</p>
+                                        </div>
+                                    </div>
+                                    <div id="colonoscopyAdvice" class="hidden flex items-start p-4 bg-pink-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-accent mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Colonoscopia o FIT</h4>
+                                            <p class="text-sm text-gray-600">Recomendado a partir de los 50 años, cada 10 años (colonoscopia) o anual (FIT). Con antecedentes familiares, iniciar 10 años antes de la edad del diagnóstico del familiar.</p>
+                                        </div>
+                                    </div>
+                                    <div id="psaTestAdvice" class="hidden flex items-start p-4 bg-pink-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-accent mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Detección de cáncer de próstata</h4>
+                                            <p class="text-sm text-gray-600">Discutir con su médico la realización de PSA y tacto rectal a partir de los 50 años (45 si afrodescendiente o con antecedentes familiares).</p>
+                                        </div>
+                                    </div>
+                                    <div id="cervicalCancerAdvice" class="hidden flex items-start p-4 bg-pink-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-accent mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Papanicolaou + VPH</h4>
+                                            <p class="text-sm text-gray-600">Cada 3-5 años hasta los 65 años según historia previa.</p>
+                                        </div>
+                                    </div>
+                                    <div id="lungScreeningAdvice" class="hidden flex items-start p-4 bg-pink-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-accent mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Tomografía de tórax</h4>
+                                            <p class="text-sm text-gray-600">Anual para fumadores actuales o ex-fumadores que hayan dejado en los últimos 15 años, con historial de 20 paquetes/año, entre 55-80 años.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cardiovascular Prevention -->
+                            <div class="recommendation-card bg-white border border-gray-200 rounded-lg p-6 transition-all duration-300">
+                                <div class="flex items-start mb-4">
+                                    <div class="bg-red-100 p-3 rounded-full mr-4">
+                                        <i class="fas fa-heartbeat text-danger text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">Prevención Cardiovascular</h3>
+                                        <p class="text-sm text-gray-600">Medidas para reducir su riesgo</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex items-start p-4 bg-red-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-danger mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Control de presión arterial</h4>
+                                            <p class="text-sm text-gray-600">Chequear al menos una vez al año. Objetivo &lt;130/80 mmHg para la mayoría de adultos.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start p-4 bg-red-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-danger mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Perfil lipídico</h4>
+                                            <p class="text-sm text-gray-600">Cada 4-6 años en adultos sanos, más frecuente si existen factores de riesgo.</p>
+                                        </div>
+                                    </div>
+                                    <div id="diabetesScreeningAdvice" class="flex items-start p-4 bg-red-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-danger mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Detección de diabetes</h4>
+                                            <p class="text-sm text-gray-600">Evaluación cada 3 años a partir de los 45 años, o antes si IMC ≥25 y tiene factores de riesgo adicionales.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start p-4 bg-red-50 rounded-lg">
+                                        <i class="fas fa-check-circle text-danger mt-1 mr-3"></i>
+                                        <div>
+                                            <h4 class="font-medium">Dieta mediterránea</h4>
+                                            <p class="text-sm text-gray-600">Rica en frutas, vegetales, granos integrales, pescado y aceite de oliva. Reducir sodio a &lt;2.3g/día.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Lifestyle Recommendations -->
+                            <div class="recommendation-card bg-white border border-gray-200 rounded-lg p-6 transition-all duration-300">
+                                <div class="flex items-start mb-4">
+                                    <div class="bg-green-100 p-3 rounded-full mr-4">
+                                        <i class="fas fa-heart text-secondary text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">Estilo de Vida Saludable</h3>
+                                        <p class="text-sm text-gray-600">Recomendaciones personalizadas</p>
+                                    </div>
+                                </div>
+                                <div id="lifestyleAdvice" class="space-y-4">
+                                    <!-- Filled by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Resources -->
+                            <div class="bg-blue-50 rounded-lg p-6 mt-8">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4">Recursos adicionales</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <a href="#" class="bg-white hover:bg-blue-100 p-4 rounded-lg border border-blue-200 flex items-center">
+                                        <i class="fas fa-file-pdf text-primary text-2xl mr-3"></i>
+                                        <span>Guía completa de prevención IAPOS</span>
+                                    </a>
+                                    <a href="#" class="bg-white hover:bg-blue-100 p-4 rounded-lg border border-blue-200 flex items-center">
+                                        <i class="fas fa-video text-primary text-2xl mr-3"></i>
+                                        <span>Videos educativos</span>
+                                    </a>
+                                    <a href="#" class="bg-white hover:bg-blue-100 p-4 rounded-lg border border-blue-200 flex items-center">
+                                        <i class="fas fa-calendar-alt text-primary text-2xl mr-3"></i>
+                                        <span>Agenda tu visita preventiva</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+ <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 py-6 mt-8">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <i class="fas fa-shield-virus text-primary text-xl mr-2"></i>
+                        <span class="font-semibold">Día Preventivo - IAPOS</span>
+                    </div>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-primary"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="mt-4 text-center md:text-left text-sm text-gray-500">
+                    © 2023 Instituto Autárquico Provincial de Obra Social. Todos los derechos reservados.
+                </div>
+            </div>
+        </footer>
+    </div>                                
+</body>
+</html>
