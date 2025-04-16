@@ -1,39 +1,37 @@
-// script.js
-
 async function saveFormData() {
     const dni = document.getElementById('dni').value;
     const birthDate = document.getElementById('birthDate').value;
-    //const age = document.getElementById('age').value;
-    //const fullName = document.getElementById('fullName').value;
-    //const biologicalSex = document.querySelector('input[name="biologicalSex"]:checked').value;
-    //const genderIdentity = document.getElementById('genderIdentity').value;
-    //const height = document.getElementById('height').value;
-    //const weight = document.getElementById('weight').value;
-    //const bmiValue = document.getElementById('bmiValue').textContent;
-    //const hypertension = document.querySelector('input[name="hypertension"]:checked').value;
-    //const diabetes = document.querySelector('input[name="diabetes"]:checked').value;
-    //const cholesterol = document.querySelector('input[name="cholesterol"]:checked').value;
-    //const depression = document.querySelector('input[name="depression"]:checked').value;
-    //const colonCancer = document.querySelector('input[name="colonCancer"]:checked').value;
-    //const breastCancer = document.querySelector('input[name="breastCancer"]:checked').value;
-    //const cervicalCancer = document.querySelector('input[name="cervicalCancer"]:checked').value;
-    //const prostateCancer = document.querySelector('input[name="prostateCancer"]:checked').value;
-    //const email = document.getElementById('email').value;
-    //const phone = document.getElementById('phone').value;
-    //const reminders = document.querySelector('input[name="reminders"]:checked').value;
-    //const smoking = document.querySelector('input[name="smoking"]:checked').value;
-    //const alcoholConsumption = document.getElementById('alcoholConsumption').value;
-    //const physicalActivity = document.getElementById('physicalActivity').value;
-    //const drugUse = document.querySelector('input[name="drugUse"]:checked').value;
-    //const diet = document.getElementById('diet').value;
-    //const otherConditions = document.getElementById('otherConditions').value;
+    // const age = document.getElementById('age').value;
+    // const fullName = document.getElementById('fullName').value;
+    // const biologicalSex = document.querySelector('input[name="biologicalSex"]:checked').value;
+    // const genderIdentity = document.getElementById('genderIdentity').value;
+    // const height = document.getElementById('height').value;
+    // const weight = document.getElementById('weight').value;
+    // const bmiValue = document.getElementById('bmiValue').textContent;
+    // const hypertension = document.querySelector('input[name="hypertension"]:checked').value;
+    // const diabetes = document.querySelector('input[name="diabetes"]:checked').value;
+    // const cholesterol = document.querySelector('input[name="cholesterol"]:checked').value;
+    // const depression = document.querySelector('input[name="depression"]:checked').value;
+    // const colonCancer = document.querySelector('input[name="colonCancer"]:checked').value;
+    // const breastCancer = document.querySelector('input[name="breastCancer"]:checked').value;
+    // const cervicalCancer = document.querySelector('input[name="cervicalCancer"]:checked').value;
+    // const prostateCancer = document.querySelector('input[name="prostateCancer"]:checked').value;
+    // const email = document.getElementById('email').value;
+    // const phone = document.getElementById('phone').value;
+    // const reminders = document.querySelector('input[name="reminders"]:checked').value;
+    // const smoking = document.querySelector('input[name="smoking"]:checked').value;
+    // const alcoholConsumption = document.getElementById('alcoholConsumption').value;
+    // const physicalActivity = document.getElementById('physicalActivity').value;
+    // const drugUse = document.querySelector('input[name="drugUse"]:checked').value;
+    // const diet = document.getElementById('diet').value;
+    // const otherConditions = document.getElementById('otherConditions').value;
 
     const formData = {
-        dni, birthDate, 
-        //age, fullName, biologicalSex, genderIdentity, height, weight, bmiValue,
-        //hypertension, diabetes, cholesterol, depression, colonCancer, breastCancer, cervicalCancer,
-        //prostateCancer, email, phone, reminders, smoking, alcoholConsumption, physicalActivity,
-        //drugUse, diet, otherConditions,
+        dni, birthDate,
+        // age, fullName, biologicalSex, genderIdentity, height, weight, bmiValue,
+        // hypertension, diabetes, cholesterol, depression, colonCancer, breastCancer, cervicalCancer,
+        // prostateCancer, email, phone, reminders, smoking, alcoholConsumption, physicalActivity,
+        // drugUse, diet, otherConditions,
     };
     try {
         const response = await fetch('/saveData', {
@@ -121,41 +119,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('height').addEventListener('input', calculateBMI);
     document.getElementById('weight').addEventListener('input', calculateBMI);
-    document.getElementById('saveButton').addEventListener('click', saveFormData);
     document.getElementById('startQuestionnaireButton').addEventListener('click', startQuestionnaire);
 
-    // Configurar el evento click para el botón "Siguiente"
-    let nextButton = document.getElementById('nextBtn');
-    console.log('Elemento nextBtn:', nextButton); // Depuración
-
-    if (nextButton) {
-        nextButton.addEventListener('click', function() {
-            console.log('Botón "Siguiente" clickeado.'); // Mensaje de depuración
+    // Configurar el evento click para el botón "Guardar y Continuar"
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            saveFormData(); // Llama a la función para guardar los datos.
 
             // Ocultar todos los pasos del formulario
-            let formSteps = document.querySelectorAll('.form-step');
+            const formSteps = document.querySelectorAll('.form-step');
             formSteps.forEach(step => step.classList.add('hidden'));
 
-            // Ocultar los botones de navegación del formulario
-            document.getElementById('prevBtn').classList.add('hidden');
-            document.getElementById('nextBtn').classList.add('hidden');
+            // Ocultar el botón "Anterior" (si aún existe en el HTML)
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) {
+                prevBtn.classList.add('hidden');
+            }
 
-            // Mostrar la sección de resultados
-            let resultsSection = document.getElementById('resultsSection');
-            console.log('Elemento resultsSection:', resultsSection); // Mensaje de depuración
-
+           // Mostrar la sección de resultados
+            const resultsSection = document.getElementById('resultsSection');
             if (resultsSection) {
                 resultsSection.classList.remove('hidden');
-                console.log('Sección de resultados mostrada.'); // Mensaje de depuración
+
+               // **OCULTAR el botón "Guardar y Continuar" cuando se muestra la sección de resultados**
+            saveButton.classList.add('hidden');
             } else {
-                console.error('No se encontró el elemento resultsSection.'); // Mensaje de depuración
+            console.error('No se encontró el elemento resultsSection.');
             }
+
 
             // Llenar los datos del usuario en la sección de resultados
             document.getElementById('resultName').textContent = document.getElementById('fullName').value;
             document.getElementById('resultDNI').textContent = document.getElementById('dni').value;
             document.getElementById('resultAge').textContent = document.getElementById('age').value;
-            document.getElementById('resultSex').textContent = document.querySelector('input[name="biologicalSex"]:checked').value;
+            const biologicalSexElement = document.querySelector('input[name="biologicalSex"]:checked');
+            document.getElementById('resultSex').textContent = biologicalSexElement ? biologicalSexElement.value : '';
             document.getElementById('resultHeight').textContent = document.getElementById('height').value;
             document.getElementById('resultWeight').textContent = document.getElementById('weight').value;
             document.getElementById('resultBMI').textContent = document.getElementById('bmiValue').textContent;
@@ -165,41 +164,4 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('formProgress').style.width = '100%';
         });
     }
-
-    // Configurar el evento click para el botón "Guardar y Continuar"
-    document.getElementById('saveButton').addEventListener('click', function() {
-        saveFormData(); // Llama a la funcion para guardar los datos.
-
-        // Ocultar todos los pasos del formulario
-        let formSteps = document.querySelectorAll('.form-step');
-        formSteps.forEach(step => step.classList.add('hidden'));
-
-        // Ocultar los botones de navegación del formulario
-        document.getElementById('prevBtn').classList.add('hidden');
-        document.getElementById('nextBtn').classList.add('hidden');
-
-        // Mostrar la sección de resultados
-        let resultsSection = document.getElementById('resultsSection');
-        console.log('Elemento resultsSection:', resultsSection); // Depuración
-
-        if (resultsSection) {
-            resultsSection.classList.remove('hidden');
-            console.log('Sección de resultados mostrada.'); // Mensaje de depuración
-        } else {
-            console.error('No se encontró el elemento resultsSection.'); // Mensaje de depuración
-        }
-
-        // Llenar los datos del usuario en la sección de resultados
-        document.getElementById('resultName').textContent = document.getElementById('fullName').value;
-        document.getElementById('resultDNI').textContent = document.getElementById('dni').value;
-        document.getElementById('resultAge').textContent = document.getElementById('age').value;
-        document.getElementById('resultSex').textContent = document.querySelector('input[name="biologicalSex"]:checked').value;
-        document.getElementById('resultHeight').textContent = document.getElementById('height').value;
-        document.getElementById('resultWeight').textContent = document.getElementById('weight').value;
-        document.getElementById('resultBMI').textContent = document.getElementById('bmiValue').textContent;
-        document.getElementById('resultBMICategory').textContent = document.getElementById('bmiCategory').textContent;
-
-        // Actualizar la barra de progreso al 100%
-        document.getElementById('formProgress').style.width = '100%';
-    });
 });

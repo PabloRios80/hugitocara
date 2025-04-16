@@ -1,0 +1,39 @@
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+.floating-label {
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+input:focus + .floating-label,
+input:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-180%) scale(0.9);
+    background-color: white;
+    padding: 0 4px;
+    color: #2B6CB0;
+}
+textarea:focus + .floating-label,
+textarea:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-180%) scale(0.9);
+    background-color: white;
+    padding: 0 4px;
+    color: #2B6CB0;
+}
+.recommendation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.date-mask::after {
+    content: "DDMMAA";
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    pointer-events: none;
+    z-index: 10;
+}
+.date-mask input:focus::after,
+.date-mask input:not(:placeholder-shown)::after {
+    display: none;
+}

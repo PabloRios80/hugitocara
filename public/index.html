@@ -22,47 +22,7 @@
             }
         }
     </script>
-    <style>
-        .progress-bar {
-            transition: width 0.5s ease-in-out;
-        }
-        .floating-label {
-            transform: translateY(-50%);
-            transition: all 0.3s ease;
-        }
-        input:focus + .floating-label,
-        input:not(:placeholder-shown) + .floating-label {
-            transform: translateY(-180%) scale(0.9);
-            background-color: white;
-            padding: 0 4px;
-            color: #2B6CB0;
-        }
-        textarea:focus + .floating-label,
-        textarea:not(:placeholder-shown) + .floating-label {
-            transform: translateY(-180%) scale(0.9);
-            background-color: white;
-            padding: 0 4px;
-            color: #2B6CB0;
-        }
-        .recommendation-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .date-mask::after {
-            content: "DDMMAA";
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #a0aec0;
-            pointer-events: none;
-            z-index: 10;
-        }
-        .date-mask input:focus::after,
-        .date-mask input:not(:placeholder-shown)::after {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-blue-50 font-sans">
     <div class="min-h-screen flex flex-col">
@@ -461,18 +421,10 @@
 
                         <div class="flex justify-end mt-8">
                             <button id="saveButton" class="bg-secondary hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium text-lg transition duration-300">
-                                Guardar y Continuar <i class="fas fa-arrow-right ml-2"></i>
+                                Guardar y C <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
-                        <div class="mt-10 flex justify-between">
-                            <button id="prevBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium hidden">
-                                <i class="fas fa-arrow-left mr-2"></i> Anterior
-                            </button>
-                            <button id="nextBtn" class="bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium ml-auto">
-                                Siguiente <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    
+                                            
                         <div id="resultsSection" class="hidden max-w-6xl mx-auto">
                             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                                 <div class="bg-primary p-8 text-center text-white">
