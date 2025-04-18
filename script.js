@@ -1,7 +1,9 @@
-async function saveFormData() {
-    const dni = document.getElementById('dni').value;
-    const birthDate = document.getElementById('birthDate').value;
-    // const age = document.getElementById('age').value;
+async function guardarDatosFormulario() {
+    const DNI = document.getElementById('dni').value;
+    const fechaDeNacimiento = document.getElementById('birthDate').value; 
+    const apellido = document.getElementById('apellido').value; // Nuevo campo
+    const nombre = document.getElementById('nombre').value;     // Nuevo campo
+    const edad = document.getElementById('age').value;   
     // const fullName = document.getElementById('fullName').value;
     // const biologicalSex = document.querySelector('input[name="biologicalSex"]:checked').value;
     // const genderIdentity = document.getElementById('genderIdentity').value;
@@ -27,8 +29,12 @@ async function saveFormData() {
     // const otherConditions = document.getElementById('otherConditions').value;
 
     const formData = {
-        dni, birthDate,
-        // age, fullName, biologicalSex, genderIdentity, height, weight, bmiValue,
+        'DNI': DNI, // Clave en castellano
+        'Fecha de Nacimiento': fechaDeNacimiento, 
+        'Apellido': apellido,             // Nueva clave
+        'Nombre': nombre,               // Nueva clave
+        'Edad': edad,  
+        // Clave en castellano        // age, fullName, biologicalSex, genderIdentity, height, weight, bmiValue,
         // hypertension, diabetes, cholesterol, depression, colonCancer, breastCancer, cervicalCancer,
         // prostateCancer, email, phone, reminders, smoking, alcoholConsumption, physicalActivity,
         // drugUse, diet, otherConditions,
@@ -125,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('saveButton');
     if (saveButton) {
         saveButton.addEventListener('click', function() {
-            saveFormData(); // Llama a la función para guardar los datos.
+            guardarDatosFormulario(); // Llama a la función para guardar los datos.
 
             // Ocultar todos los pasos del formulario
             const formSteps = document.querySelectorAll('.form-step');
@@ -147,8 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
             console.error('No se encontró el elemento resultsSection.');
             }
-
-
+            
             // Llenar los datos del usuario en la sección de resultados
             document.getElementById('resultName').textContent = document.getElementById('fullName').value;
             document.getElementById('resultDNI').textContent = document.getElementById('dni').value;

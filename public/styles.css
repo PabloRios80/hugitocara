@@ -37,3 +37,6 @@ textarea:not(:placeholder-shown) + .floating-label {
 .date-mask input:not(:placeholder-shown)::after {
     display: none;
 }
+.hidden {
+    display: none !important;
+}
