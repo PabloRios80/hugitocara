@@ -3,41 +3,82 @@ async function guardarDatosFormulario() {
     const fechaDeNacimiento = document.getElementById('birthDate').value; 
     const apellido = document.getElementById('apellido').value; // Nuevo campo
     const nombre = document.getElementById('nombre').value;     // Nuevo campo
-    const edad = document.getElementById('age').value;   
-    // const fullName = document.getElementById('fullName').value;
-    // const biologicalSex = document.querySelector('input[name="biologicalSex"]:checked').value;
-    // const genderIdentity = document.getElementById('genderIdentity').value;
-    // const height = document.getElementById('height').value;
-    // const weight = document.getElementById('weight').value;
-    // const bmiValue = document.getElementById('bmiValue').textContent;
-    // const hypertension = document.querySelector('input[name="hypertension"]:checked').value;
-    // const diabetes = document.querySelector('input[name="diabetes"]:checked').value;
-    // const cholesterol = document.querySelector('input[name="cholesterol"]:checked').value;
-    // const depression = document.querySelector('input[name="depression"]:checked').value;
-    // const colonCancer = document.querySelector('input[name="colonCancer"]:checked').value;
-    // const breastCancer = document.querySelector('input[name="breastCancer"]:checked').value;
-    // const cervicalCancer = document.querySelector('input[name="cervicalCancer"]:checked').value;
-    // const prostateCancer = document.querySelector('input[name="prostateCancer"]:checked').value;
-    // const email = document.getElementById('email').value;
-    // const phone = document.getElementById('phone').value;
-    // const reminders = document.querySelector('input[name="reminders"]:checked').value;
-    // const smoking = document.querySelector('input[name="smoking"]:checked').value;
-    // const alcoholConsumption = document.getElementById('alcoholConsumption').value;
-    // const physicalActivity = document.getElementById('physicalActivity').value;
-    // const drugUse = document.querySelector('input[name="drugUse"]:checked').value;
-    // const diet = document.getElementById('diet').value;
-    // const otherConditions = document.getElementById('otherConditions').value;
+    const edad = document.getElementById('age').value; 
+    const email = document.getElementById('email').value;
+    const telefono = document.getElementById('phone').value;  
+    const sexo_biologico = document.querySelector('input[name="biologicalSex"]:checked').value;
+    const genero_autopercibido = document.getElementById('genderIdentity').value;
+    const altura = document.getElementById('height').value;
+    const peso = document.getElementById('weight').value;
+
+    // Capturamos el valor del IMC directamente del span
+    const bmiValor = document.getElementById('bmiValue').textContent;
+    // Capturamos la categoría del IMC directamente del span
+    const bmiCategoria = document.getElementById('bmiCategory').textContent;
+
+    const hipertension = document.querySelector('input[name="hypertension"]:checked').value;
+    const diabetes = document.querySelector('input[name="diabetes"]:checked').value;
+    const colesterol = document.querySelector('input[name="cholesterol"]:checked').value;
+    const depresion = document.querySelector('input[name="depression"]:checked').value;
+    const actividad_fisica = document.querySelector('input[name="physicalActivityLow"]:checked').value;
+    const sedentarismo = document.querySelector('input[name="sedentary"]:checked').value;
+    const abuso_alcohol_otros = document.querySelector('input[name="drugUseExcessive"]:checked').value;
+    const stress_ansiedad = document.querySelector('input[name="stressAnxietyExcessive"]:checked').value;
+    const preocupacion_salud = document.querySelector('input[name="healthConcernExcessive"]:checked').value;
+    const abuso_pantallas = document.querySelector('input[name="screenTimeExcessive"]:checked').value;
+    const tabaquismo = document.querySelector('input[name="smokingStatus"]:checked').value;
+    const fumador_cronico = document.querySelector('input[name="smokingDuration"]:checked').value;
+    const hipertension_familiar = document.querySelector('input[name="familiarHipertension"]:checked').value;
+    const diabetes_familiar = document.querySelector('input[name="familiarDiabetes"]:checked').value;
+    const adicciones_familiar = document.querySelector('input[name="familiarAdicciones"]:checked').value;
+    const obesidad_familiar = document.querySelector('input[name="familiarObesidad"]:checked').value;
+    const depresion_familiar = document.querySelector('input[name="familiarDepresion"]:checked').value;
+    const violencia_familiar = document.querySelector('input[name="familiarViolenciaAbuso"]:checked').value;
+    const cancer_de_colon = document.querySelector('input[name="colonCancer"]:checked').value;
+    const cancer_de_mama = document.querySelector('input[name="breastCancer"]:checked').value;
+    const cancer_de_cuello_utero = document.querySelector('input[name="cervicalCancer"]:checked').value;
+    const cancer_de_prostata = document.querySelector('input[name="prostateCancer"]:checked').value;
+    
 
     const formData = {
         'DNI': DNI, // Clave en castellano
         'Fecha de Nacimiento': fechaDeNacimiento, 
-        'Apellido': apellido,             // Nueva clave
-        'Nombre': nombre,               // Nueva clave
+        'Apellido': apellido,             
+        'Nombre': nombre,               
         'Edad': edad,  
-        // Clave en castellano        // age, fullName, biologicalSex, genderIdentity, height, weight, bmiValue,
-        // hypertension, diabetes, cholesterol, depression, colonCancer, breastCancer, cervicalCancer,
-        // prostateCancer, email, phone, reminders, smoking, alcoholConsumption, physicalActivity,
-        // drugUse, diet, otherConditions,
+        'Email': email,
+        'Telefono': telefono,
+        'Sexo biologico': sexo_biologico,
+        'Genero autopercibido': genero_autopercibido,
+        'Altura': altura,
+        'Peso': peso,
+
+        'BMI': bmiValor,         // Valor del IMC tomado del HTML
+        'Categoria BMI': bmiCategoria,
+
+
+        'Hipertension': hipertension,
+        'Diabetes': diabetes,
+        'Colesterol': colesterol,
+        'Depresion': depresion,
+        'Actividad fisica': actividad_fisica,
+        'Sedentarismo': sedentarismo,
+        'Abuso alcohol y/o drogas': abuso_alcohol_otros,
+        'Stress': stress_ansiedad,
+        'Exceso preocupacion salud': preocupacion_salud,
+        'Exceso pantallas': abuso_pantallas,
+        'Fuma': tabaquismo,
+        'Fumador cronico': fumador_cronico,
+        'Hipertension familiar': hipertension_familiar,
+        'Diabetes familiar': diabetes_familiar,
+        'Adicciones familiar': adicciones_familiar,
+        'Obesidad familiar': obesidad_familiar,
+        'Depresion familiar': depresion_familiar,
+        'Violencia familiar': violencia_familiar,
+        'Cancer de colon': cancer_de_colon,
+        'Cancer de mama': cancer_de_mama,
+        'Cancer cuello utero': cancer_de_cuello_utero,
+        'Cancer de prostata': cancer_de_prostata,
     };
     try {
         const response = await fetch('/saveData', {
@@ -112,7 +153,6 @@ function calculateAge() {
 
     document.getElementById('age').value = age;
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('birthDate').addEventListener('change', calculateAge);
 
@@ -143,30 +183,98 @@ document.addEventListener('DOMContentLoaded', function() {
                 prevBtn.classList.add('hidden');
             }
 
-           // Mostrar la sección de resultados
+            // Mostrar la sección de resultados
             const resultsSection = document.getElementById('resultsSection');
             if (resultsSection) {
                 resultsSection.classList.remove('hidden');
 
-               // **OCULTAR el botón "Guardar y Continuar" cuando se muestra la sección de resultados**
-            saveButton.classList.add('hidden');
+                // **OCULTAR el botón "Guardar y Continuar" cuando se muestra la sección de resultados**
+                saveButton.classList.add('hidden');
             } else {
-            console.error('No se encontró el elemento resultsSection.');
+                console.error('No se encontró el elemento resultsSection.');
             }
-            
-            // Llenar los datos del usuario en la sección de resultados
-            document.getElementById('resultName').textContent = document.getElementById('fullName').value;
-            document.getElementById('resultDNI').textContent = document.getElementById('dni').value;
-            document.getElementById('resultAge').textContent = document.getElementById('age').value;
-            const biologicalSexElement = document.querySelector('input[name="biologicalSex"]:checked');
-            document.getElementById('resultSex').textContent = biologicalSexElement ? biologicalSexElement.value : '';
-            document.getElementById('resultHeight').textContent = document.getElementById('height').value;
-            document.getElementById('resultWeight').textContent = document.getElementById('weight').value;
-            document.getElementById('resultBMI').textContent = document.getElementById('bmiValue').textContent;
-            document.getElementById('resultBMICategory').textContent = document.getElementById('bmiCategory').textContent;
-
-            // Actualizar la barra de progreso al 100%
-            document.getElementById('formProgress').style.width = '100%';
         });
+    }
+    // =========================================================================
+    // NUEVA FUNCIÓN PARA MOSTRAR LAS RECOMENDACIONES
+    // =========================================================================
+
+    async function mostrarRecomendaciones() {
+        const dni = document.getElementById('dni').value; // O la forma en que identifiques al usuario
+
+        if (dni) {
+            try {
+                const response = await fetch(`http://localhost:3001/getPreventivePlan/${dni}`); // Cambia el puerto a 3001
+                if (response.ok) {
+                    const planPreventivo = await response.json();
+                    console.log("Plan Preventivo Recibido:", planPreventivo);
+                    mostrarPlanEnHTML(planPreventivo);
+                } else if (response.status === 404) {
+                    alert('Usuario no encontrado.');
+                } else {
+                    alert('Error al obtener las recomendaciones.');
+                }
+            } catch (error) {
+                console.error('Error al solicitar el plan preventivo:', error);
+                alert('Error al solicitar las recomendaciones.');
+            }
+        } else {
+            alert('Por favor, ingrese su DNI para ver las recomendaciones.');
+        }
+    }
+    function mostrarPlanEnHTML(plan) {
+        console.log('Plan recibido en el frontend:', plan);
+        document.getElementById('resultName').textContent = plan.name;
+        document.getElementById('resultDNI').textContent = document.getElementById('dni').value;
+        document.getElementById('resultAge').textContent = plan.age;
+        document.getElementById('resultSex').textContent = plan.sex;
+        document.getElementById('resultBMICategory').textContent = plan.bmiCategory;
+    
+        const recommendationsByCategoryContainer = document.getElementById('recommendationsByCategory');
+        recommendationsByCategoryContainer.innerHTML = ''; // Limpiar contenido anterior
+    
+        // Agrupar recomendaciones por categoría
+        const recommendationsPorCategoria = {};
+        plan.recommendations.forEach(recommendation => {
+            if (!recommendationsPorCategoria[recommendation.categoria]) {
+                recommendationsPorCategoria[recommendation.categoria] = [];
+            }
+            recommendationsPorCategoria[recommendation.categoria].push(recommendation);
+        });
+    
+        // Crear y agregar secciones por categoría al HTML
+        for (const categoria in recommendationsPorCategoria) {
+            if (recommendationsPorCategoria.hasOwnProperty(categoria)) {
+                const categoriaSection = document.createElement('div');
+                categoriaSection.classList.add('mb-8'); // Espacio entre categorías
+    
+                const categoriaTitulo = document.createElement('h2');
+                categoriaTitulo.classList.add('text-2xl', 'font-semibold', 'text-gray-800', 'mb-4');
+                categoriaTitulo.textContent = categoria;
+                categoriaSection.appendChild(categoriaTitulo);
+    
+                recommendationsPorCategoria[categoria].forEach(recommendation => {
+                    const recommendationItem = document.createElement('div');
+                    recommendationItem.classList.add('flex', 'items-start', 'p-4', 'bg-green-50', 'rounded-lg', 'mb-2');
+                    recommendationItem.innerHTML = `
+                        <i class="fas fa-check-circle text-secondary mt-1 mr-3"></i>
+                        <div>
+                            <p class="text-sm text-gray-800">${recommendation.practica}</p>
+                            <button class="text-xs text-primary mt-1" data-explicativo-id="${recommendation.explicativo_id}">Conozca más sobre esto</button>
+                        </div>
+                    `;
+                    categoriaSection.appendChild(recommendationItem);
+                });
+    
+                recommendationsByCategoryContainer.appendChild(categoriaSection);
+            }
+        }
+    
+        document.getElementById('resultsSection').classList.remove('hidden');
+    }
+    // Agrega un event listener a un botón para mostrar las recomendaciones
+    const showRecommendationsButton = document.getElementById('showRecommendationsButton'); // Asegúrate de tener este botón en tu HTML
+    if (showRecommendationsButton) {
+        showRecommendationsButton.addEventListener('click', mostrarRecomendaciones);
     }
 });
