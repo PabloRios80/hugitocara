@@ -88,9 +88,10 @@ async function guardarDatosFormulario() {
             },
             body: JSON.stringify(formData)
         });
-
         if (response.ok) {
             alert('Datos guardados correctamente.');
+            // Redirigir a la nueva página para ver recomendaciones, pasando el DNI como parámetro
+            window.location.href = `ver_recomendaciones.html?dni=${DNI}`;
         } else {
             alert('Error al guardar datos. Inténtalo de nuevo.');
         }
@@ -99,6 +100,7 @@ async function guardarDatosFormulario() {
         alert('Error al guardar datos. Inténtalo de nuevo.');
     }
 }
+
 // Función para calcular el IMC
 function calculateBMI() {
     const height = parseFloat(document.getElementById('height').value) / 100; // Convertir a metros
