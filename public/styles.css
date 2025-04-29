@@ -1,29 +1,55 @@
-.progress-bar {
+:root {
+    --iapos-blue-dark: #003366; /* Reemplazar con el color real */
+    --iapos-blue-light: #ADD8E6; /* Reemplazar con el color real */
+    --iapos-text-primary: #212529;
+    --iapos-background: #f8f9fa; /* Reemplazar si es diferente */
+    --iapos-white: #ffffff;
+    --iapos-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+  
+  body {
+    font-family: var(--iapos-font-family);
+    background-color: var(--iapos-background);
+    color: var(--iapos-text-primary);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .progress-bar {
     transition: width 0.5s ease-in-out;
-}
-.floating-label {
+  }
+  
+  .floating-label {
     transform: translateY(-50%);
     transition: all 0.3s ease;
-}
-input:focus + .floating-label,
-input:not(:placeholder-shown) + .floating-label {
+  }
+  
+  input:focus + .floating-label,
+  input:not(:placeholder-shown) + .floating-label {
     transform: translateY(-180%) scale(0.9);
     background-color: white;
     padding: 0 4px;
     color: #2B6CB0;
-}
-textarea:focus + .floating-label,
-textarea:not(:placeholder-shown) + .floating-label {
+  }
+  
+  textarea:focus + .floating-label,
+  textarea:not(:placeholder-shown) + .floating-label {
     transform: translateY(-180%) scale(0.9);
     background-color: white;
     padding: 0 4px;
     color: #2B6CB0;
-}
-.recommendation-card:hover {
+  }
+  
+  .recommendation-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-.date-mask::after {
+  }
+  
+  .date-mask::after {
     content: "DDMMAA";
     position: absolute;
     left: 15px;
@@ -32,86 +58,41 @@ textarea:not(:placeholder-shown) + .floating-label {
     color: #a0aec0;
     pointer-events: none;
     z-index: 10;
-}
-.date-mask input:focus::after,
-.date-mask input:not(:placeholder-shown)::after {
+  }
+  
+  .date-mask input:focus::after,
+  .date-mask input:not(:placeholder-shown)::after {
     display: none;
-}
-.hidden {
+  }
+  
+  .hidden {
     display: none !important;
-}
-/* Estilos generales para la página de recomendaciones */
-body {
-    font-family: sans-serif;
-    background-color: #f4f4f4;
-    margin: 0; /* Elimina los márgenes predeterminados del body */
-    padding: 20px; /* Añade un poco de espacio alrededor del contenido */
-    display: flex;
-    justify-content: center; /* Centra el contenido horizontalmente */
-    align-items: flex-start; /* Alinea el contenido al inicio verticalmente */
-    min-height: 100vh; /* Asegura que el body ocupe al menos el alto de la ventana */
-}
-
-.container-recomendaciones {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
+  }
+  
+  /* Estilos generales para la página de recomendaciones */
+  /* ... (el resto de tus estilos para la página de recomendaciones) ... */
+  
+  .iapos-header {
+    background-color: var(--iapos-blue-dark);
+    color: var(--iapos-white);
+    width: 100%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 90%; /* Ocupa un buen porcentaje del ancho */
-    max-width: 960px; /* Establece un ancho máximo */
-}
-
-.intro-text {
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 20px;
-}
-
-/* Estilos para los contenedores de cada categoría */
-.categoria-container {
-    margin-bottom: 25px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    overflow: hidden; /* Para que el fondo del título se ajuste */
-}
-
-/* Estilos para los títulos de las categorías */
-.categoria-titulo {
-    color: white;
-    padding: 15px 20px;
+  }
+  
+  .iapos-header .container {
+    max-width: 1200px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .iapos-body {
+    font-family: var(--iapos-font-family);
+    background-color: var(--iapos-background);
+    color: var(--iapos-text-primary);
     margin: 0;
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
-/* Estilos para la lista de prácticas */
-.practicas-lista {
-    list-style: none;
-    padding: 15px 20px;
-    margin: 0;
-}
-
-.practicas-lista li {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.practicas-lista li:last-child {
-    border-bottom: none;
-}
-
-/* Estilos para el botón "Conozca más" (puedes ajustarlos) */
-.conocer-mas-btn {
-    background: none;
-    border: none;
-    color: #2B6CB0;
-    cursor: pointer;
     padding: 0;
-}
-
-.conocer-mas-btn:hover {
-    text-decoration: underline;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }

@@ -74,9 +74,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `<div class="categoria-container">
                             <h3 class="categoria-titulo" style="background-color: ${color};">${categoria}</h3>
                             <ul class="practicas-lista">`;
-                recomendacionesPorCategoria[categoria].forEach(recommendation => {
-                    html += `<li class="practica-item">${recommendation.practica} <button class="conocer-mas-btn text-xs text-primary mt-1" data-explicativo-id="${recommendation.explicativo_id}">Conozca más</button></li>`;
-                });
+                            recomendacionesPorCategoria[categoria].forEach(recommendation => {
+                                const practicas = Array.isArray(recommendation.practica) ? recommendation.practica : [recommendation.practica]; // Aseguramos que sea un array para iterar
+                
+                                practicas.forEach(practica => {
+                                    html += `<li class="item-practica">${practica} <button class="conocer-mas-btn text-xs text-primary mt-1" data-explicativo-id="${recommendation.explicativo_id}">Conozca más</button></li>`;
+                                });
+                            });
                 html += `</ul></div>`;
             }
         }
