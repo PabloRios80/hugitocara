@@ -280,3 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
         showRecommendationsButton.addEventListener('click', mostrarRecomendaciones);
     }
 });
+app.get('/script.js', (req, res) => {
+    res.sendFile(__dirname + '/script.js');
+});

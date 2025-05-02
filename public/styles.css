@@ -1,98 +1,153 @@
-:root {
-    --iapos-blue-dark: #003366; /* Reemplazar con el color real */
-    --iapos-blue-light: #ADD8E6; /* Reemplazar con el color real */
-    --iapos-text-primary: #212529;
-    --iapos-background: #f8f9fa; /* Reemplazar si es diferente */
-    --iapos-white: #ffffff;
-    --iapos-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  }
-  
-  body {
-    font-family: var(--iapos-font-family);
-    background-color: var(--iapos-background);
-    color: var(--iapos-text-primary);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-  
-  .progress-bar {
-    transition: width 0.5s ease-in-out;
-  }
-  
-  .floating-label {
-    transform: translateY(-50%);
-    transition: all 0.3s ease;
-  }
-  
-  input:focus + .floating-label,
-  input:not(:placeholder-shown) + .floating-label {
-    transform: translateY(-180%) scale(0.9);
-    background-color: white;
-    padding: 0 4px;
-    color: #2B6CB0;
-  }
-  
-  textarea:focus + .floating-label,
-  textarea:not(:placeholder-shown) + .floating-label {
-    transform: translateY(-180%) scale(0.9);
-    background-color: white;
-    padding: 0 4px;
-    color: #2B6CB0;
-  }
-  
-  .recommendation-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .date-mask::after {
-    content: "DDMMAA";
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #a0aec0;
-    pointer-events: none;
-    z-index: 10;
-  }
-  
-  .date-mask input:focus::after,
-  .date-mask input:not(:placeholder-shown)::after {
-    display: none;
-  }
-  
-  .hidden {
-    display: none !important;
-  }
-  
-  /* Estilos generales para la página de recomendaciones */
-  /* ... (el resto de tus estilos para la página de recomendaciones) ... */
-  
-  .iapos-header {
-    background-color: var(--iapos-blue-dark);
-    color: var(--iapos-white);
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .iapos-header .container {
-    max-width: 1200px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  
-  .iapos-body {
-    font-family: var(--iapos-font-family);
-    background-color: var(--iapos-background);
-    color: var(--iapos-text-primary);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
+/* Estilo base general */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 18px;
+  background: linear-gradient(to right, #e6f0f9, #f2f9ff);
+  color: #333;
+}
+
+/* Encabezado */
+header {
+  background-color: #005288;
+  color: white;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo + Info */
+.logo-area {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+}
+
+.logo {
+  height: 60px;
+  margin-right: 15px;
+}
+
+.site-info h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.site-info p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Acciones del encabezado */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill-button {
+  background-color: #007b9e;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.primary-button {
+  background-color: #ffffff;
+  color: #005288;
+  border: 1px solid #005288;
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background-color: #005288;
+  color: white;
+}
+
+/* Bienvenida */
+#welcomeScreen {
+  background-color: #fff;
+  margin: 50px auto;
+  padding: 40px;
+  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+#welcomeScreen h2 {
+  font-size: 2rem;
+  color: #005288;
+}
+
+#welcomeScreen p {
+  font-size: 1.1rem;
+  color: #444;
+}
+
+#welcomeScreen button {
+  margin-top: 10px;
+}
+
+/* Botones grandes */
+#welcomeScreen .bg-primary {
+  background-color: #007b9e;
+}
+
+#welcomeScreen .bg-secondary {
+  background-color: #28a745;
+}
+
+#welcomeScreen button:hover {
+  opacity: 0.9;
+}
+
+/* Recomendaciones */
+.categoria-container {
+  margin-bottom: 30px;
+  padding: 20px;
+  border-left: 6px solid #ccc;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.categoria-titulo {
+  font-size: 1.5rem;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.practicas-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.item-practica {
+  padding: 10px;
+  margin: 8px 0;
+  background-color: white;
+  border-left: 4px solid #007b9e;
+  border-radius: 4px;
+}
+
+/* Botón conocer más */
+.conocer-mas-btn {
+  background: none;
+  border: none;
+  color: #007b9e;
+  cursor: pointer;
+  font-size: 0.9rem;
+}

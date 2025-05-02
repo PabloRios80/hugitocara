@@ -3,27 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tus Recomendaciones Personalizadas</title>
-    <link href="styles.css" rel="stylesheet"> </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">¡Ve tus recomendaciones personalizadas!</h1>
+    <title>Recomendaciones de Salud</title>
 
-        <div class="mb-4">
-            <label for="dniBuscar" class="block text-gray-700 text-sm font-bold mb-2">DNI:</label>
-            <input type="text" id="dniBuscar" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Ingresa tu DNI">
-        </div>
-
-        <div class="flex justify-center">
-            <button id="buscarRecomendacionesBtn" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Buscar Recomendaciones
-            </button>
-        </div>
-
-        <div id="resultadosRecomendaciones" class="mt-6">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo-area">
+                <img src="images/logo_iapos.png" alt="Logo IAPOS" class="logo" />
+                <h1 class="text-xl">Recomendaciones de Salud</h1>
             </div>
-    </div>
+        </div>
+    </header>
 
-    <script src="ver_recomendaciones.js"></script>
+    <main>
+        <div id="formSection">
+            <h2 class="text-2xl text-center">
+                <i class="fas fa-heartbeat"></i> ¡Consulta tus recomendaciones!
+            </h2>
+
+            <div class="mb-4">
+                <label for="dniBuscar">DNI:</label>
+                <input type="text" id="dniBuscar" class="input-field" placeholder="Ingresa tu DNI">
+            </div>
+
+            <div class="flex justify-center">
+                <button id="buscarRecomendacionesBtn" class="primary-button">
+                    <i class="fas fa-search mr-2"></i> Buscar
+                </button>
+            </div>
+
+            <div id="resultadosRecomendaciones" class="mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="text-center text-sm">
+        <p>&copy; 2025 IAPOS. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="/ver_recomendaciones.js"></script>
+
 </body>
 </html>
