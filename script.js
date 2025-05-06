@@ -155,8 +155,89 @@ function calculateAge() {
 
     document.getElementById('age').value = age;
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('birthDate').addEventListener('change', calculateAge);
+
+    document.getElementById('height').addEventListener('input', calculateBMI);
+    document.getElementById('weight').addEventListener('input', calculateBMI);
+
+    // Tu código existente para iniciar el cuestionario
+    const startQuestionnaireButton = document.getElementById('startQuestionnaireButton');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const mainForm = document.getElementById('mainForm');
+    if (startQuestionnaireButton && welcomeScreen && mainForm) {
+        startQuestionnaireButton.addEventListener('click', function() {
+            console.log('Función startQuestionnaire ejecutada');
+            welcomeScreen.classList.add('hidden');
+            mainForm.classList.remove('hidden');
+            showStep(currentStep); // Mostrar el primer paso al iniciar
+            updateProgress();
+        });
+    } else {
+        console.error("Elementos de inicio del cuestionario no encontrados.");
+    }
+    // Tu código existente para guardar los datos del formulario
+    const submitBtn = document.getElementById('submitBtn'); // Asumiendo que tienes un botón de envío final
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            guardarDatosFormulario();
+        });
+    }
+
+    // Elementos para la navegación entre pasos
+    const formSteps = document.querySelectorAll('.form-step');
+    const prevBtns = document.querySelectorAll('[id^="prevBtn"]');
+    const nextBtns = document.querySelectorAll('[id^="nextBtn"]');
+    const formProgress = document.getElementById('formProgress'); // Asegúrate de tener este elemento en tu HTML
+    let currentStep = 0;
+
+    function updateProgress() {
+        if (formProgress) {
+            formProgress.style.width = `${((currentStep + 1) / formSteps.length) * 100}%`;
+        }
+    }
+
+    function showStep(stepIndex) {
+        formSteps.forEach((step, index) => {
+            step.classList.toggle('hidden', index !== stepIndex);
+        });
+        updateProgress();
+    }
+
+    // Mostrar el primer paso al cargar la página si no hay pantalla de bienvenida
+    if (formSteps.length > 0 && !document.getElementById('welcomeScreen')) {
+        showStep(currentStep);
+        updateProgress();
+    } else if (mainForm && !mainForm.classList.contains('hidden')) {
+        showStep(currentStep);
+        updateProgress();
+    } else {
+        // Si hay pantalla de bienvenida, el primer paso se mostrará al iniciar
+        formSteps.forEach((step, index) => {
+            step.classList.add('hidden');
+        });
+    }
+
+
+    nextBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (currentStep < formSteps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+    });
+
+    prevBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    });
 
     function startQuestionnaire() {
         console.log('Función startQuestionnaire ejecutada');
@@ -165,11 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('formProgress').style.width = '20%';
     }
 
-    document.getElementById('height').addEventListener('input', calculateBMI);
-    document.getElementById('weight').addEventListener('input', calculateBMI);
-    document.getElementById('startQuestionnaireButton').addEventListener('click', startQuestionnaire);
-
-    // Configurar el evento click para el botón "Guardar y Continuar"
+        // Configurar el evento click para el botón "Guardar y Continuar"
     const saveButton = document.getElementById('saveButton');
     if (saveButton) {
         saveButton.addEventListener('click', function() {
@@ -197,6 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
     // =========================================================================
     // NUEVA FUNCIÓN PARA MOSTRAR LAS RECOMENDACIONES
     // =========================================================================
@@ -280,6 +358,4 @@ document.addEventListener('DOMContentLoaded', function() {
         showRecommendationsButton.addEventListener('click', mostrarRecomendaciones);
     }
 });
-app.get('/script.js', (req, res) => {
-    res.sendFile(__dirname + '/script.js');
-});
+

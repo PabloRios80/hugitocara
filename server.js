@@ -16,11 +16,23 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const API_KEY = process.env.API_KEY;
 
 async function saveDataToSheet(data) {
-    const auth = new google.auth.GoogleAuth({
-        keyFile: 'credentials.json',
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    let authConfig = {};
 
+    if (process.env.CREDENTIALS_JSON) {
+        // Estamos en Render, leer desde la variable de entorno
+        authConfig = {
+            credentials: JSON.parse(process.env.CREDENTIALS_JSON),
+            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        };
+    } else {
+        // Estamos localmente, leer desde el archivo
+        authConfig = {
+            keyFile: 'credentials.json',
+            scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        };
+    }
+
+    const auth = new google.auth.GoogleAuth(authConfig);
     const client = await auth.getClient();
     const googleSheets = google.sheets({ version: 'v4', auth: client });
 
@@ -29,7 +41,7 @@ async function saveDataToSheet(data) {
     };
     console.log("SPREADSHEET_ID:", SPREADSHEET_ID);
     console.log("Nombre de la hoja:", 'hoja de vida IAPOS');
-    
+
     try {
         await googleSheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
@@ -43,7 +55,6 @@ async function saveDataToSheet(data) {
         throw error;
     }
 }
-
 app.post('/saveData', async (req, res) => {
     try {
         await saveDataToSheet(req.body);
