@@ -244,8 +244,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('welcomeScreen').classList.add('hidden');
         document.getElementById('mainForm').classList.remove('hidden');
         document.getElementById('formProgress').style.width = '20%';
+        currentStep = 0; // Asegurarnos de que la variable currentStep esté en 0
+        showStep(currentStep); // Llamar a showStep para mostrar el primer paso
     }
-
         // Configurar el evento click para el botón "Guardar y Continuar"
     const saveButton = document.getElementById('saveButton');
     if (saveButton) {
@@ -274,6 +275,57 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    // ** NUEVO CÓDIGO PARA VERIFICAR EL DNI AL PERDER EL FOCO **
+    const dniInputHojaDeVida = document.getElementById('dni'); // Asegúrate de que este sea el ID del campo DNI en tu formulario "Hoja de Vida"
+    if (dniInputHojaDeVida) {
+        dniInputHojaDeVida.addEventListener('blur', async function() {
+            const dni = this.value.trim();
+            if (dni.length >= 7) {
+                try {
+                    const response = await fetch('/checkDNI', { // Usamos la ruta /checkDNI que crearemos en el servidor
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ dni: dni })
+                    });
+                    const data = await response.json();
+                    if (data.exists) {
+                        // El DNI ya existe, mostrar el cartel
+                        const dniExistenteMessage = document.createElement('div');
+                        dniExistenteMessage.classList.add('text-yellow-500', 'mt-2');
+                        dniExistenteMessage.textContent = `¡Atención! El DNI ${dni} ya está registrado con el nombre ${data.nombre} ${data.apellido} y fecha de nacimiento ${data.fechaDeNacimiento}. Puede continuar.`;
+                        this.parentNode.appendChild(dniExistenteMessage);
+                        const nombreInput = document.getElementById('nombre');
+                        const apellidoInput = document.getElementById('apellido');
+                        const birthDateInput = document.getElementById('birthDate');
+                        const ageInput = document.getElementById('age'); // Obtén el campo de edad
+                    
+                        if (nombreInput && apellidoInput && birthDateInput && ageInput) {
+                            nombreInput.value = data.nombre;
+                            apellidoInput.value = data.apellido;
+                            birthDateInput.value = data.fechaDeNacimiento;
+                    
+                            // **DISPARAR MANUALMENTE EL EVENTO CHANGE PARA CALCULAR LA EDAD**
+                            const changeEvent = new Event('change');
+                            birthDateInput.dispatchEvent(changeEvent);
+                        }
+
+                    } else {
+                        // El DNI no existe, limpiar cualquier mensaje previo
+                        const mensajeExistente = this.parentNode.querySelector('.text-yellow-500');
+                        if (mensajeExistente) {
+                            mensajeExistente.remove();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error al verificar el DNI:', error);
+                    // Opcionalmente mostrar un mensaje de error al usuario
+                }
+            }
+        });
+    }
+
 
     // =========================================================================
     // NUEVA FUNCIÓN PARA MOSTRAR LAS RECOMENDACIONES
