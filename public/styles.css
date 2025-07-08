@@ -151,3 +151,15 @@ header {
   cursor: pointer;
   font-size: 0.9rem;
 }
+.mensaje-antecedente {
+    color: #dc2626; /* Rojo para el mensaje de estudio ya realizado */
+    font-weight: bold;
+    font-size: 0.875rem; /* Tamaño de fuente más pequeño */
+    margin-left: 0.5rem; /* Espacio a la izquierda */
+}
+
+.explicativo-titulo-normal {
+    font-size: 0.875rem;
+    color: #4a5568; /* Un gris oscuro para el título normal */
+    margin-left: 0.5rem;
+}

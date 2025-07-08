@@ -9,24 +9,27 @@ app_preventive.use(cors());
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const API_KEY = process.env.API_KEY;
-
 async function connectToGoogleSheet() {
     const auth = new google.auth.GoogleAuth({
         keyFile: 'credentials.json',
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+        // Es más seguro usar 'https://www.googleapis.com/auth/spreadsheets.readonly'
+        // si solo necesitas leer datos, pero 'https://www.googleapis.com/auth/spreadsheets'
+        // está bien si también vas a escribir en otras partes del código.
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'], 
     });
 
     const client = await auth.getClient();
     const googleSheets = google.sheets({ version: 'v4', auth: client });
 
     try {
-        const docInfo = await googleSheets.spreadsheets.get({
+        // La llamada a .get() para verificar la conexión está bien aquí.
+        // No necesitas la API_KEY si usas credenciales de servicio.
+        await googleSheets.spreadsheets.get({
             spreadsheetId: SPREADSHEET_ID,
-            key: API_KEY, // Puedes usar la API Key para lectura si está configurada
         });
-        const sheetName = 'Hoja 1'; // Asegúrate de que este sea el nombre correcto de tu hoja
-        const sheet = googleSheets.spreadsheets.values;
-        return { googleSheets, spreadsheetId: SPREADSHEET_ID, sheetName };
+        
+        // ¡Esta es la línea clave! Solo devuelve lo que está definido y necesitas.
+        return { googleSheets, spreadsheetId: SPREADSHEET_ID };
     } catch (error) {
         console.error('Error al conectar con la hoja:', error);
         throw error;
@@ -41,41 +44,85 @@ app_preventive.listen(PREVENTIVE_PORT, () => {
 });
 // ... (dentro de preventive_backend.js) ...
 
+
+
 app_preventive.get('/getPreventivePlan/:dni', async (req, res) => {
     const dni = req.params.dni;
     try {
-        const { googleSheets, spreadsheetId, sheetName } = await connectToGoogleSheet();
-        const response = await googleSheets.spreadsheets.values.get({
-            spreadsheetId: spreadsheetId,
-            range: sheetName,
-        });
-        const rows = response.data.values;
+        const { googleSheets, spreadsheetId } = await connectToGoogleSheet();
 
-        if (rows && rows.length > 0) {
-            const headers = rows[0].map(header => header.trim());
-            const userData = rows.slice(1).find(row => {
-                const rowData = Object.fromEntries(headers.map((header, index) => [header, row[index]]));
-                return rowData['DNI'] === dni; // Ajusta el nombre de la columna 'DNI'
+        // --- Lectura de Hoja 1 (datos del formulario actual) ---
+        const responseHoja1 = await googleSheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Hoja 1', // O el nombre real de tu hoja de formularios
+        });
+        const rowsHoja1 = responseHoja1.data.values;
+
+        if (!rowsHoja1 || rowsHoja1.length === 0) {
+            return res.status(404).send('No se encontraron datos en la hoja de formularios (Hoja 1).');
+        }
+
+        const headersHoja1 = rowsHoja1[0].map(header => header.trim());
+        const userDataRow = rowsHoja1.slice(1).find(row => {
+            const rowData = Object.fromEntries(headersHoja1.map((header, index) => [header, row[index]]));
+            return rowData['DNI'] === dni;
+        });
+
+        if (!userDataRow) {
+            return res.status(404).send('Usuario no encontrado en la hoja de formularios (Hoja 1).');
+        }
+
+        const userDataObject = Object.fromEntries(headersHoja1.map((header, index) => [header, userDataRow[index]]));
+
+        // --- Lectura de Hoja 2 (antecedentes de estudios previos) ---
+        const responseHoja2 = await googleSheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Hoja 2', // ¡Este es el nombre de tu hoja de antecedentes!
+        });
+        const rowsHoja2 = responseHoja2.data.values; // <-- ¡Corregido!
+        let previousStudiesData = {}; // Objeto para almacenar los datos relevantes de estudios previos
+        if (rowsHoja2 && rowsHoja2.length > 0) {
+            const headersHoja2 = rowsHoja2[0].map(header => header.trim());
+            const userPreviousStudiesRow = rowsHoja2.slice(1).find(row => {
+                const rowData = Object.fromEntries(headersHoja2.map((header, index) => [header, row[index]]));
+                return rowData['DNI'] === dni;
             });
 
-            if (userData) {
-                const userDataObject = Object.fromEntries(headers.map((header, index) => [header, userData[index]]));
-                const preventivePlan = generatePreventivePlan(userDataObject);
-                res.json(preventivePlan);
-            } else {
-                res.status(404).send('Usuario no encontrado');
+            if (userPreviousStudiesRow) {
+                const columnsOfInterest = [
+                    'Cancer_cervico_uterino_HPV',
+                    'Cancer_cervico_uterino_PAP',
+                    'Fecha_cierre_DP', 
+                    'Cancer_colon_Colonoscopia',
+                    'Cancer_mama_Mamografia',
+                    'Hepatitis_B',
+                    'Hepatitis_C', 
+                    'VIH',
+                    'VDRL',
+                    'Prostata_PSA',
+                    'Chagas'
+                ];
+
+                headersHoja2.forEach((header, index) => {
+                    if (columnsOfInterest.includes(header)) {
+                        // Asegúrate de usar el valor de la fila, no el headersHoja2[index]
+                        previousStudiesData[header] = userPreviousStudiesRow[index] ? userPreviousStudiesRow[index].trim() : '';
+                    }
+                });
             }
-        } else {
-            res.status(404).send('No se encontraron datos en la hoja');
         }
+        console.log("Datos de estudios previos del usuario:", previousStudiesData); // Para depuración
+
+        // --- Generar el plan preventivo con ambos conjuntos de datos ---
+        const preventivePlan = generatePreventivePlan(userDataObject, previousStudiesData); // Aquí se pasa como argumento
+        res.json(preventivePlan);
 
     } catch (error) {
         console.error('Error al obtener el plan preventivo:', error);
         res.status(500).send('Error al generar el plan preventivo');
     }
 });
-
-function generatePreventivePlan(userData) {
+function generatePreventivePlan(userData, previousStudiesData = {}) { 
     const age = parseInt(userData['Edad']);
     const sex = userData['Sexo biologico'];
     const bmiCategory = userData['BMICategoria'];
@@ -208,32 +255,32 @@ function generatePreventivePlan(userData) {
             "subcategoria": "Rastreo de cáncer de cuello uterino - PAP",
             "practica": "Papanicolaou (PAP)",
             "indicacion": {
-                "edad_desde": 21,
-                "edad_hasta": 65,
-                "sexo_biologico": "femenino",
-                "condicion1_campo": null,
-                "condicion1_valor": null,
-                "condicion2_campo": null,
-                "condicion2_valor": null
+                "edad_desde": 21, "edad_hasta": 65, "sexo_biologico": "femenino",
+                "condicion1_campo": null, "condicion1_valor": null,
+                "condicion2_campo": null, "condicion2_valor": null
             },
             "repeticion": "Cada 3 años",
-            "explicativo_id": "pap_general"
+            "explicativo_id": "pap_general",
+            "antecedente_columna": "Cancer_cervico_uterino_PAP", // Columna en Hoja 2
+            "antecedente_resultado_omitir": ["Normal", "Patologico"], // Resultados que significan que ya se hizo
+            "mensaje_previo": "Este estudio ya está realizado (fecha: ${Fecha_cierre_DP}).", // Usa ${} para variables
+            "mensaje_repetir": null // No hay mensaje para repetir aquí, se recomienda si aplica
         },
         {
             "categoria": "Prevención del cáncer",
             "subcategoria": "Rastreo de cáncer de cuello uterino - VPH",
             "practica": "Test de VPH",
             "indicacion": {
-                "edad_desde": 30,
-                "edad_hasta": 65,
-                "sexo_biologico": "femenino",
-                "condicion1_campo": null,
-                "condicion1_valor": null,
-                "condicion2_campo": null,
-                "condicion2_valor": null
+                "edad_desde": 30, "edad_hasta": 65, "sexo_biologico": "femenino",
+                "condicion1_campo": null, "condicion1_valor": null,
+                "condicion2_campo": null, "condicion2_valor": null
             },
             "repeticion": "Cada 5 años",
-            "explicativo_id": "vph_general"
+            "explicativo_id": "vph_general",
+            "antecedente_columna": "Cancer_cervico_uterino_HPV", // Mismo campo que PAP para VPH
+            "antecedente_resultado_omitir": ["Normal", "Patologico"],
+            "mensaje_previo": "Este estudio de VPH ya está realizado (fecha: ${Fecha_cierre_DP}).",
+            "mensaje_repetir": null
         },
         {
             "categoria": "Prevención del cáncer",
@@ -256,16 +303,19 @@ function generatePreventivePlan(userData) {
             "subcategoria": "Rastreo de cáncer de colon",
             "practica": "Videocolonoscopia (VCC)",
             "indicacion": {
-                "edad_desde": 40,
+                "edad_desde": 50,
                 "edad_hasta": 80,
                 "sexo_biologico": "Ambos",
-                "condicion1_campo": "Cancer de colon", // Antecedente familiar
-                "condicion1_valor": ["si"],
+                "condicion1_campo": "Cancer de colon", // Sin antecedente familiar (implícito)
+                "condicion1_valor": ["no"], // O podrías no tener esta condición
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
             "repeticion": "Cada 5 años (general) / Según criterio médico (riesgo)",
-            "explicativo_id": "vcc_riesgo_familiar"
+            "explicativo_id": "vcc_riesgo_familiar",
+            "antecedente_columna": "Cancer_colon_Colonoscopia",
+            "antecedente_resultado_omitir": ["Normal", "Patologico"],
+            "mensaje_previo": "Existen estudios previos de Colonoscopia (normal/patológico). Discutir con el profesional tratante la necesidad de repetirla."
         },
         {
             "categoria": "Prevención del cáncer",
@@ -328,13 +378,16 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "Cada 2 años",
-            "explicativo_id": "mamografia_general"
+            "repeticion": "Según criterio médico (riesgo)",
+            "explicativo_id": "mamografia_general",
+            "antecedente_columna": "Cancer_mama_Mamografia",
+            "antecedente_resultado_omitir": ["Normal", "Patologico"],
+            "mensaje_previo": "Existen estudios previos de Mamografía (normal/patológico). Discutir con el profesional tratante la necesidad de repetirla."
             },
             {
-            "categoria": "Prevención de cáncer de próstata",
-            "subcategoria": "Rastreo con PSA",
-            "practica": ["Antígeno Prostático Específico - PSA"],
+            "categoria": "Prevención del cáncer",
+            "subcategoria": "Rastreo de cáncer de próstata - PSA",
+            "practica": "Prostata_PSA",
             "indicacion": {
                 "edad_desde": 50,
                 "edad_hasta": 80,
@@ -347,13 +400,16 @@ function generatePreventivePlan(userData) {
                 "edad_hasta_condicion2": 80
             },
             "repeticion": "Según criterio médico",
-            "explicativo_id": "psa_general"
+            "explicativo_id": "psa_general",
+            "antecedente_columna": "Prostata_PSA",
+            "antecedente_resultado_omitir": ["Normal", "Patologico"],
+            "mensaje_previo": "Existen estudios previos de PSA. Comentar con su médico tratante."
         },
         // ... infecciosas ...
         {
             "categoria": "Prevención de enfermedades infecciosas",
-            "subcategoria": "Prevención de VIH",
-            "practica": "Test diagnóstico VIH",
+            "subcategoria": "Rastreo de VIH",
+            "practica": "VIH",
             "indicacion": {
                 "edad_desde": 18,
                 "edad_hasta": 100,
@@ -363,13 +419,16 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "Cada 2 años",
-            "explicativo_id": "test_diagnostico_vih"
+            "repeticion": "Según riesgo",
+            "explicativo_id": "vih_general",
+            "antecedente_columna": "VIH",
+            "antecedente_resultado_omitir": ["Negativo", "Positivo"],
+            "mensaje_previo": "Existen estudios previos de VIH. Comentar con su médico tratante."
         },
         {
             "categoria": "Prevención de enfermedades infecciosas",
             "subcategoria": "Prevención de Hepatitis B",
-            "practica": "Test diagnóstico VHB (HBsAg, Ac anti-HBc, Ac anti-HBs)",
+            "practica": "Hepatitis B",
             "indicacion": {
                 "edad_desde": 18,
                 "edad_hasta": 100,
@@ -379,13 +438,16 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "2 test diagnósticos en la vida",
-            "explicativo_id": "test_diagnostico_vhb"
+            "repeticion": "Según riesgo",
+            "explicativo_id": "hepatitis_b_general",
+            "antecedente_columna": "Hepatitis_B",
+            "antecedente_resultado_omitir": ["Negativo", "Positivo"],
+            "mensaje_previo": "Existen estudios previos de Hepatitis B. Comentar con su médico tratante."
         },
         {
             "categoria": "Prevención de enfermedades infecciosas",
-            "subcategoria": "Prevención de Hepatitis C",
-            "practica": "Test diagnóstico VHC (Ac anti-VHC)",
+            "subcategoria": "Rastreo de Hepatitis C",
+            "practica": "Hepatitis C",
             "indicacion": {
                 "edad_desde": 18,
                 "edad_hasta": 100,
@@ -395,13 +457,16 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "2 test diagnósticos en la vida",
-            "explicativo_id": "test_diagnostico_vhc"
+            "repeticion": "Según riesgo",
+            "explicativo_id": "hepatitis_c_general",
+            "antecedente_columna": "Hepatitis_C",
+            "antecedente_resultado_omitir": ["Negativo", "Positivo"],
+            "mensaje_previo": "Existen estudios previos de Hepatitis C. Comentar con su médico tratante."
         },
         {
             "categoria": "Prevención de enfermedades infecciosas",
-            "subcategoria": "Prevención de Sífilis",
-            "practica": "Test diagnóstico para Sífilis (VDRL, FTA-Abs)",
+            "subcategoria": "Rastreo de Sífilis",
+            "practica": "VDRL",
             "indicacion": {
                 "edad_desde": 18,
                 "edad_hasta": 100,
@@ -411,13 +476,16 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "Cada 2 años",
-            "explicativo_id": "test_diagnostico_sifilis"
+            "repeticion": "Según riesgo",
+            "explicativo_id": "vdrl_general",
+            "antecedente_columna": "VDRL",
+            "antecedente_resultado_omitir": ["Negativo", "Positivo"],
+            "mensaje_previo": "Existen estudios previos de VDRL. Comentar con su médico tratante."
         },
         {
             "categoria": "Prevención de enfermedades infecciosas",
-            "subcategoria": "Prevención de Chagas",
-            "practica": "Test diagnóstico para Chagas",
+            "subcategoria": "Rastreo de Chagas",
+            "practica": "Chagas",
             "indicacion": {
                 "edad_desde": 18,
                 "edad_hasta": 100,
@@ -427,8 +495,11 @@ function generatePreventivePlan(userData) {
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
-            "repeticion": "2 test diagnósticos en la vida",
-            "explicativo_id": "test_diagnostico_chagas"
+            "repeticion": "Según riesgo",
+            "explicativo_id": "chagas_general",
+            "antecedente_columna": "Chagas",
+            "antecedente_resultado_omitir": ["Negativo", "Positivo"],
+            "mensaje_previo": "Existen estudios previos de Chagas. Comentar con su médico tratante."
         },
         //   salud bucal   
         {
@@ -543,7 +614,7 @@ function generatePreventivePlan(userData) {
                 "condicion1_valor": ["Sobrepeso", "Obesidad"],
                 "condicion2_campo": null,
                 "condicion2_valor": null
-            },
+            },  
             "repeticion": "Información y seguimiento según necesidad",
             "explicativo_id": "consejo_alimentacion_saludable" // Asegúrate de tener este ID
         },
@@ -586,35 +657,120 @@ function generatePreventivePlan(userData) {
 
     const addedRecommendations = new Set(); // Utilizamos un Set para rastrear las recomendaciones añadidas
 
-    tablaRecomendaciones.forEach(recomendacion => {
-        const cumpleEdad = age >= recomendacion.indicacion.edad_desde && age <= recomendacion.indicacion.edad_hasta;
-        const cumpleSexo = recomendacion.indicacion.sexo_biologico === 'Ambos' || recomendacion.indicacion.sexo_biologico.toLowerCase() === sex.toLowerCase();
-        let cumpleCondicion1 = true;
-        let cumpleCondicion2 = true;
+// Lógica para aplicar las recomendaciones
+tablaRecomendaciones.forEach(rec => {
+    const { indicacion, practica, antecedente_columna, antecedente_resultado_omitir, mensaje_previo, repeticion, explicativo_id } = rec;
+    let shouldRecommend = true;
+    let finalExplicativo = "Información no disponible."; // Inicializa con un valor por defecto
 
-        if (recomendacion.indicacion.condicion1_campo && userData[recomendacion.indicacion.condicion1_campo]) {
-            cumpleCondicion1 = recomendacion.indicacion.condicion1_valor.includes(userData[recomendacion.indicacion.condicion1_campo]);
-        }
+    // --- LOGS DE DEPURACIÓN CLAVE ---
+    console.log(`\n--- Evaluando práctica: ${practica} ---`);
+    console.log(`  antecedente_columna de la regla: ${antecedente_columna}`);
+    console.log(`  Valores a omitir según la regla (antecedente_resultado_omitir):`, antecedente_resultado_omitir);
 
-        if (recomendacion.indicacion.condicion2_campo && userData[recomendacion.indicacion.condicion2_campo]) {
-            cumpleCondicion2 = recomendacion.indicacion.condicion2_valor.includes(userData[recomendacion.indicacion.condicion2_campo]);
-        }
+    if (antecedente_columna && previousStudiesData[antecedente_columna] !== undefined && previousStudiesData[antecedente_columna] !== null) {
+        const antecedenteValueRaw = previousStudiesData[antecedente_columna].trim();
 
-        if (cumpleEdad && cumpleSexo && cumpleCondicion1 && cumpleCondicion2) {
-            const practica = Array.isArray(recomendacion.practica) ? recomendacion.practica : [recomendacion.practica];
-            practica.forEach(p => {
-                const recommendationKey = `${p}-${recomendacion.explicativo_id}`; // Creamos una clave única para la recomendación
-                if (!addedRecommendations.has(recommendationKey)) {
-                    recommendations.push({
-                        practica: p,
-                        explicativo_id: recomendacion.explicativo_id
+        // Normalizar el valor leído de la Hoja 2: a minúsculas y sin tildes
+        const antecedenteValueNormalized = antecedenteValueRaw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        console.log(`  Valor LEIDO de Hoja 2 para ${antecedente_columna}: '${antecedenteValueRaw}'`);
+        console.log(`  Valor NORMALIZADO de Hoja 2: '${antecedenteValueNormalized}'`); // Nuevo log para depuración
+
+        if (antecedente_resultado_omitir) {
+            // Normalizar también los valores de la lista de omisión en tu tablaRecomendaciones
+            const omitirNormalized = antecedente_resultado_omitir.map(val => val.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+            // --- LA LÍNEA CLAVE PARA ENTENDER SI LA CONDICIÓN SE CUMPLE ---
+            const condicionDeOmisionSeCumple = omitirNormalized.includes(antecedenteValueNormalized);
+            console.log(`  ¿'${antecedenteValueNormalized}' está en [${omitirNormalized.join(', ')}]? -> ${condicionDeOmisionSeCumple}`); // Log actualizado
+
+            if (condicionDeOmisionSeCumple) {
+                shouldRecommend = false;
+                console.log(`  ¡OMITIENDO recomendación para ${practica} debido a antecedentes! shouldRecommend = false`);
+                if (mensaje_previo) {
+                    finalExplicativo = mensaje_previo.replace(/\$\{(\w+)\}/g, (match, p1) => {
+                        return previousStudiesData[p1] || '';
                     });
-                    addedRecommendations.add(recommendationKey); // Marcamos esta recomendación como añadida
+                } else {
+                    finalExplicativo = "Ya existen estudios previos de esta práctica. Consultar con su médico tratante.";
                 }
-            });
+            }
         }
-    });
+    }
+    else if (antecedente_columna) { // Solo si antecedente_columna está definido, pero no se encontró el valor
+        console.log(`  No se encontró valor en previousStudiesData para '${antecedente_columna}' o es undefined/null.`);
+    }
 
+    // --- LOG: Estado final de shouldRecommend antes de la decisión de agregar ---
+    console.log(`  Estado final de shouldRecommend para ${practica}: ${shouldRecommend}`);
+
+    // Paso 2: Si la recomendación no fue omitida por antecedentes previos, aplicar la lógica normal
+    if (shouldRecommend) {
+        if (age >= indicacion.edad_desde && age <= indicacion.edad_hasta) {
+            const indicadoSexo = (indicacion.sexo_biologico || '').toLowerCase();
+
+            if (indicadoSexo === "ambos" || indicadoSexo === sex) {
+                let cumpleCondiciones = true;
+
+                if (indicacion.condicion1_campo && indicacion.condicion1_valor) {
+                    const userValue = userData[indicacion.condicion1_campo];
+                    if (!userValue || !indicacion.condicion1_valor.includes(userValue)) {
+                        cumpleCondiciones = false;
+                    }
+                }
+
+                if (indicacion.condicion2_campo && indicacion.condicion2_valor) {
+                    const userValue = userData[indicacion.condicion2_campo];
+                    if (!userValue || !indicacion.condicion2_valor.includes(userValue)) {
+                        cumpleCondiciones = false;
+                    }
+                }
+
+                if (cumpleCondiciones) {
+                    const explicativoObj = explicativos[explicativo_id] || { titulo: "Información no disponible.", mensaje: "Información detallada no disponible." };
+                    
+                    // --- INICIO DE MODIFICACIÓN ---
+                    // QUITA la siguiente línea si la tenías antes:
+                    // recommendations.push({ ... });
+                    
+                    const newRecommendation = { // Declara newRecommendation aquí
+                        categoria: rec.categoria,
+                        subcategoria: rec.subcategoria,
+                        practica: practica,
+                        repeticion: repeticion,
+                        explicativo: explicativoObj // Siempre un objeto
+                    };
+                    console.log(`  --> AGREGANDO ${practica} (por criterios de formulario)`);
+                    console.log(`  Objeto de recomendación a agregar:`, newRecommendation); // <-- ESTE LOG AHORA FUNCIONARÁ
+                    recommendations.push(newRecommendation); // Solo un push aquí
+                    // --- FIN DE MODIFICACIÓN ---
+                }
+            }
+        }
+    } 
+    else { // Si shouldRecommend es false (se omite por antecedentes)
+        const newRecommendation = { // Declara newRecommendation aquí
+            categoria: rec.categoria,
+            subcategoria: rec.subcategoria,
+            practica: practica,
+            repeticion: repeticion, // Podrías poner "N/A" o similar si quieres
+            // Si la recomendación se omite, el explicativo es un OBJETO con el mensaje de antecedente
+            explicativo: {
+                titulo: `Estudio ya realizado`, // O un título genérico que quieras
+                mensaje: finalExplicativo,     // El mensaje personalizado
+                de_que_se_trata: "Este estudio fue identificado como realizado o no aplicable según sus antecedentes.",
+                para_quien_se_recomienda: "",
+                cuando_repetir: "",
+                riesgos: "",
+                que_hacer: "Por favor, consulte con su médico tratante para revisar sus antecedentes y la necesidad de futuras prácticas."
+            }
+        };
+        console.log(`  --> AGREGANDO ${practica} (con mensaje de antecedente)`);
+        console.log(`  Objeto de recomendación a agregar:`, newRecommendation); // <-- ESTE LOG AHORA FUNCIONARÁ
+        recommendations.push(newRecommendation); // Solo un push aquí
+    }
+}); // <-- EL FOR EACH TERMINA AQUÍ.
     return {
         name: userData['Nombre'] + ' ' + userData['Apellido'],
         age: age,
@@ -622,4 +778,4 @@ function generatePreventivePlan(userData) {
         bmiCategory: bmiCategory,
         recommendations: recommendations
     };
-}
+} // <-- Y LA FUNCIÓN generatePreventivePlan TERMINA AQUÍ.

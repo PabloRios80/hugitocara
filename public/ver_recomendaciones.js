@@ -61,29 +61,50 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             recomendacionesPorCategoria[recommendation.categoria].push(recommendation);
         });
-    
         const coloresCategorias = {
-            "Prevención de enfermedades crónicas y riesgo cardiovascular": "#2B6CB0",
-            "Prevención del cáncer": "#E53E3E"
-            // Agrega más colores para tus otras categorías
-        };
+        "Prevención de enfermedades crónicas y riesgo cardiovascular": "#2B6CB0",
+        "Prevención del cáncer": "#E53E3E",
+        "Prevención de enfermedades infecciosas": "#38A169" // Agrega este color si no lo tenías
+        // Agrega más colores para tus otras categorías
+    };
     
-        for (const categoria in recomendacionesPorCategoria) {
-            if (recomendacionesPorCategoria.hasOwnProperty(categoria)) {
-                const color = coloresCategorias[categoria] || "#718096";
-                html += `<div class="categoria-container">
-                            <h3 class="categoria-titulo" style="background-color: ${color};">${categoria}</h3>
-                            <ul class="practicas-lista">`;
-                            recomendacionesPorCategoria[categoria].forEach(recommendation => {
-                                const practicas = Array.isArray(recommendation.practica) ? recommendation.practica : [recommendation.practica]; // Aseguramos que sea un array para iterar
-                
-                                practicas.forEach(practica => {
-                                    html += `<li class="item-practica">${practica} <button class="conocer-mas-btn text-xs text-primary mt-1" data-explicativo-id="${recommendation.explicativo_id}">Conozca más</button></li>`;
-                                });
-                            });
-                html += `</ul></div>`;
-            }
+    for (const categoria in recomendacionesPorCategoria) {
+        if (recomendacionesPorCategoria.hasOwnProperty(categoria)) {
+            const color = coloresCategorias[categoria] || "#718096"; // Color por defecto si no se encuentra
+            html += `<div class="categoria-container">
+                        <h3 class="categoria-titulo" style="background-color: ${color};">${categoria}</h3>
+                        <ul class="practicas-lista">`;
+            recomendacionesPorCategoria[categoria].forEach(recommendation => {
+                // Aseguramos que `practica` sea siempre un array para iterar
+                const practicas = Array.isArray(recommendation.practica) ? recommendation.practica : [recommendation.practica];
+
+                practicas.forEach(practica => {
+                    // Accedemos al objeto explicativo. Siempre será un objeto.
+                    const explicativoObj = recommendation.explicativo || {}; // Asegura que siempre sea un objeto vacío si es undefined
+
+                    let displayHtml = '';
+
+                    // Si el título del explicativo es "Estudio ya realizado", mostramos el mensaje de antecedente
+                    if (explicativoObj.titulo === "Estudio ya realizado" && explicativoObj.mensaje) {
+                        displayHtml = `<span class="mensaje-antecedente">(${explicativoObj.mensaje})</span>`;
+                    } else if (explicativoObj.titulo) {
+                        // Para recomendaciones generales, mostramos el título del explicativo y el botón "Conozca más"
+                        displayHtml = `<span class="explicativo-titulo-normal">(${explicativoObj.titulo})</span>`;
+                        // El botón "Conozca más" solo se agrega si la recomendación original tenía un explicativo_id
+                        if (recommendation.explicativo_id) {
+                            displayHtml += `<button class="conocer-mas-btn text-xs text-primary mt-1" data-explicativo-id="${recommendation.explicativo_id}">Conozca más</button>`;
+                        }
+                    } else {
+                        // En caso de que no haya título ni mensaje (ej. "Información no disponible.")
+                        displayHtml = `<span class="explicativo-titulo-normal">(Información no disponible)</span>`;
+                    }
+
+                    html += `<li class="item-practica">${practica} ${displayHtml}</li>`;
+                });
+            });
+            html += `</ul></div>`; // Cierre de <ul> y <div> de categoria-container
         }
+    }
     
         html += `</div>`; // Cierre del contenedor principal
         resultadosDiv.innerHTML = html;
