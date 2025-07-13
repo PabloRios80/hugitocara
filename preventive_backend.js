@@ -148,31 +148,15 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "practica": "Glucemia en ayunas",
             "indicacion": {
                 "edad_desde": 18,
-                "edad_hasta": 40,
+                "edad_hasta": 100,
                 "sexo_biologico": "Ambos",
-                "condicion1_campo": "Categoria BMI",
-                "condicion1_valor": ["Obesidad", "Sobrepeso"],
+                "condicion1_campo": null,
+                "condicion1_valor": null,
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
             "repeticion": "Cada 1 años si tiene factores de riesgo",
             "explicativo_id": "glucemia_ayunas_riesgo"
-        },
-        {
-            "categoria": "Prevención de enfermedades crónicas y riesgo cardiovascular",
-            "subcategoria": "Rastreo de Diabetes",
-            "practica": "Glucemia en ayunas",
-            "indicacion": {
-                "edad_desde": 40,
-                "edad_hasta": 100,
-                "sexo_biologico": "Ambos",
-                "condicion1_campo": "Categoria BMI",
-                "condicion1_valor": ["Normal", "Bajo peso"],
-                "condicion2_campo": null,
-                "condicion2_valor": null
-            },
-            "repeticion": "Cada 2 años",
-            "explicativo_id": "glucemia_ayunas_mayor40"
         },
         {
             "categoria": "Prevención de enfermedades crónicas y riesgo cardiovascular",
@@ -184,10 +168,10 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             ],
             "indicacion": {
             "edad_desde": 18,
-            "edad_hasta": 40,
+            "edad_hasta": 100,
             "sexo_biologico": "Ambos",
-            "condicion1_campo": "Categoria BMI",
-            "condicion1_valor": ["Obesidad", "Sobrepeso"],
+            "condicion1_campo": null,
+            "condicion1_valor": null,
             "condicion2_campo": null,
             "condicion2_valor": null
             },
@@ -196,30 +180,10 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
         },
         {
             "categoria": "Prevención de enfermedades crónicas y riesgo cardiovascular",
-            "subcategoria": "Rastreo de dislipemias",
-            "practica": [
-                "Colesterol total",
-                "Colesterol HDL",
-                "Colesterol LDL"
-            ],
-            "indicacion": {
-                "edad_desde": 40,
-                "edad_hasta": 100,
-                "sexo_biologico": "Ambos",
-                "condicion1_campo": "Categoria BMI",
-                "condicion1_valor": ["Normal", "Bajo peso"],
-                "condicion2_campo": null,
-                "condicion2_valor": null
-            },
-            "repeticion": "Cada 2 años",
-            "explicativo_id": "colesterol_mayor40"
-        },
-        {
-            "categoria": "Prevención de enfermedades crónicas y riesgo cardiovascular",
             "subcategoria": "Rastreo de hipertension",
             "practica": "tomar TA ambos brazos",
             "indicacion": {
-            "edad_desde": 40,
+            "edad_desde": 18,
             "edad_hasta": 100,
             "sexo_biologico": "Ambos",
             "condicion1_campo": null,
