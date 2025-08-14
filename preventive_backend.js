@@ -293,7 +293,7 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
                 "condicion1_valor": ["no"], // O podrías no tener esta condición
                 "condicion2_campo": null,
                 "condicion2_valor": null
-            },
+            }, 
             "repeticion": "Anual (SOMF)",
             "explicativo_id": "rastreo_colon_general" // Puedes crear un nuevo ID
         },
