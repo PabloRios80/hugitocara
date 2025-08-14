@@ -4,14 +4,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "googleapis": "^148.0.0"
+    "googleapis": "^148.0.0",
+    "http-proxy-middleware": "^3.0.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.4"
-  },
-  "scripts": {
-    "start": "concurrently \"node server.js\" \"node preventive_backend.js\""
   }
 }

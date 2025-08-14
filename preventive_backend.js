@@ -46,7 +46,7 @@ app_preventive.listen(PREVENTIVE_PORT, () => {
 
 
 
-app_preventive.get('/getPreventivePlan/:dni', async (req, res) => {
+    app_preventive.get('/getPreventivePlan/:dni', async (req, res) => {
     const dni = req.params.dni;
     try {
         const { googleSheets, spreadsheetId } = await connectToGoogleSheet();
