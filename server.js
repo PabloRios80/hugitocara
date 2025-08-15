@@ -17,7 +17,6 @@ app.use(express.static('public'));
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const API_KEY = process.env.API_KEY;
-
 async function connectToGoogleSheet() {
     let authConfig = {};
 
