@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function buscarRecomendaciones(dni) {
         resultadosDiv.innerHTML = '<p>Cargando recomendaciones...</p>';
         try {
-            const response = await fetch(`http://localhost:3001/getPreventivePlan/${dni}`);
+            const response = await fetch(`/getPreventivePlan/${dni}`);
             if (response.ok) {
                 const planPreventivo = await response.json();
                 console.log("Plan Preventivo Recibido:", planPreventivo);
