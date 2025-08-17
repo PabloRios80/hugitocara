@@ -6,24 +6,28 @@
     <title>Día Preventivo - IAPOS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="script.js" defer></script>
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#003366', /* MODIFICACIÓN: Azul oscuro de IAPOS (ejemplo) */
-                        secondary: '#ADD8E6', /* MODIFICACIÓN: Azul claro de IAPOS (ejemplo) */
+                        primary: '#003366',
+                        secondary: '#ADD8E6',
                         accent: '#D53F8C',
                         warning: '#DD6B20',
                         info: '#4299E1',
-                        'iapos-bg-light': '#f8f9fa', /* MODIFICACIÓN: Un gris claro para el fondo (ejemplo) */
+                        'iapos-bg-light': '#f8f9fa',
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="styles.css">
+    
+    <script src="./form.js" defer></script>
 </head>
 <body class="bg-iapos-bg-light font-sans iapos-body">
     <div class="min-h-screen flex flex-col">
@@ -78,11 +82,10 @@
                         </div>
                     </div>
                     
-                    
                     <div id="mainForm" class="p-8 hidden">
                         <h2 class="text-2xl font-bold text-gray-800 mb-6">Cuestionario de Salud Preventiva</h2>
-                    
-                        <div id="identificationInfo" class="form-step hidden mb-10" data-step="1">
+    
+                        <div id="identificationInfo" class="form-step mb-10" data-step="1">
                             <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
                                 <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">1</span>
                                 Identificación
@@ -259,66 +262,66 @@
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Hago muy poca actividad física:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="physicalActivityLowSi" name="physicalActivityLow" value="si" class="mr-2">
+                                    <input type="radio" id="physicalActivityLowSi" name="physicalActivityLow" value="si" class="mr-2" required>
                                     <label for="physicalActivityLowSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="physicalActivityLowNo" name="physicalActivityLow" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="physicalActivityLowNo" name="physicalActivityLow" value="no" class="ml-4 mr-2" required>
                                     <label for="physicalActivityLowNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="physicalActivityLowNoSabe" name="physicalActivityLow" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="physicalActivityLowNoSabe" name="physicalActivityLow" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="physicalActivityLowNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Paso mucho tiempo sentado/a:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="sedentarySi" name="sedentary" value="si" class="mr-2">
+                                    <input type="radio" id="sedentarySi" name="sedentary" value="si" class="mr-2" required>
                                     <label for="sedentarySi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="sedentaryNo" name="sedentary" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="sedentaryNo" name="sedentary" value="no" class="ml-4 mr-2" required>
                                     <label for="sedentaryNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="sedentaryNoSabe" name="sedentary" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="sedentaryNoSabe" name="sedentary" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="sedentaryNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Tengo problemas excesivos de alcohol y/o drogas:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="drugUseExcessiveSi" name="drugUseExcessive" value="si" class="mr-2">
+                                    <input type="radio" id="drugUseExcessiveSi" name="drugUseExcessive" value="si" class="mr-2" required>
                                     <label for="drugUseExcessiveSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="drugUseExcessiveNo" name="drugUseExcessive" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="drugUseExcessiveNo" name="drugUseExcessive" value="no" class="ml-4 mr-2" required>
                                     <label for="drugUseExcessiveNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="drugUseExcessiveNoSabe" name="drugUseExcessive" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="drugUseExcessiveNoSabe" name="drugUseExcessive" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="drugUseExcessiveNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Siento mucho stress y/o nervios y/o ansiedad y/o miedos excesivos:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="stressAnxietyExcessiveSi" name="stressAnxietyExcessive" value="si" class="mr-2">
+                                    <input type="radio" id="stressAnxietyExcessiveSi" name="stressAnxietyExcessive" value="si" class="mr-2" required>
                                     <label for="stressAnxietyExcessiveSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="stressAnxietyExcessiveNo" name="stressAnxietyExcessive" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="stressAnxietyExcessiveNo" name="stressAnxietyExcessive" value="no" class="ml-4 mr-2" required>
                                     <label for="stressAnxietyExcessiveNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="stressAnxietyExcessiveNoSabe" name="stressAnxietyExcessive" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="stressAnxietyExcessiveNoSabe" name="stressAnxietyExcessive" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="stressAnxietyExcessiveNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Vivo muy preocupado/a por mi salud:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="healthConcernExcessiveSi" name="healthConcernExcessive" value="si" class="mr-2">
+                                    <input type="radio" id="healthConcernExcessiveSi" name="healthConcernExcessive" value="si" class="mr-2" required>
                                     <label for="healthConcernExcessiveSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="healthConcernExcessiveNo" name="healthConcernExcessive" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="healthConcernExcessiveNo" name="healthConcernExcessive" value="no" class="ml-4 mr-2" required>
                                     <label for="healthConcernExcessiveNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="healthConcernExcessiveNoSabe" name="healthConcernExcessive" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="healthConcernExcessiveNoSabe" name="healthConcernExcessive" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="healthConcernExcessiveNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Uso mucho tiempo el celular o pantallas por cuestiones no laborales:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="screenTimeExcessiveSi" name="screenTimeExcessive" value="si" class="mr-2">
+                                    <input type="radio" id="screenTimeExcessiveSi" name="screenTimeExcessive" value="si" class="mr-2" required>
                                     <label for="screenTimeExcessiveSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="screenTimeExcessiveNo" name="screenTimeExcessive" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="screenTimeExcessiveNo" name="screenTimeExcessive" value="no" class="ml-4 mr-2" required>
                                     <label for="screenTimeExcessiveNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="screenTimeExcessiveNoSabe" name="screenTimeExcessive" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="screenTimeExcessiveNoSabe" name="screenTimeExcessive" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="screenTimeExcessiveNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
@@ -338,23 +341,23 @@
                                 <label class="block text-gray-700 font-bold mb-2">Tabaquismo:</label>
                                 <div class="flex flex-col">
                                     <div class="flex items-center mb-2">
-                                        <input type="radio" id="smokingNever" name="smokingStatus" value="nunca" class="mr-2">
+                                        <input type="radio" id="smokingNever" name="smokingStatus" value="nunca" class="mr-2" required>
                                         <label for="smokingNever" class="text-gray-700">Nunca fumó</label>
                                     </div>
                                     <div class="flex items-center mb-2">
-                                        <input type="radio" id="smokingEx" name="smokingStatus" value="ex_fumador" class="mr-2">
+                                        <input type="radio" id="smokingEx" name="smokingStatus" value="ex_fumador" class="mr-2" required>
                                         <label for="smokingEx" class="text-gray-700">Ex fumador</label>
                                     </div>
                                     <div class="flex items-center mb-2">
-                                        <input type="radio" id="smokingLess10" name="smokingStatus" value="menos_de_10" class="mr-2">
+                                        <input type="radio" id="smokingLess10" name="smokingStatus" value="menos_de_10" class="mr-2" required>
                                         <label for="smokingLess10" class="text-gray-700">Menos de 10 por día</label>
                                     </div>
                                     <div class="flex items-center mb-2">
-                                        <input type="radio" id="smoking10to20" name="smokingStatus" value="entre_10_y_20" class="mr-2">
+                                        <input type="radio" id="smoking10to20" name="smokingStatus" value="entre_10_y_20" class="mr-2" required>
                                         <label for="smoking10to20" class="text-gray-700">Entre 10 y 20 por día</label>
                                     </div>
                                     <div class="flex items-center mb-2">
-                                        <input type="radio" id="smokingMore20" name="smokingStatus" value="mas_de_20" class="mr-2">
+                                        <input type="radio" id="smokingMore20" name="smokingStatus" value="mas_de_20" class="mr-2" required>
                                         <label for="smokingMore20" class="text-gray-700">Más de 20 por día</label>
                                     </div>
                                 </div>
@@ -362,11 +365,11 @@
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">En el caso de ser fumador o ex-fumador: ¿Fumó por más de 20 años?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="smokingDurationYes" name="smokingDuration" value="si" class="mr-2">
+                                    <input type="radio" id="smokingDurationYes" name="smokingDuration" value="si" class="mr-2" required>
                                     <label for="smokingDurationYes" class="text-gray-700">Sí</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="radio" id="smokingDurationNo" name="smokingDuration" value="no" class="mr-2">
+                                    <input type="radio" id="smokingDurationNo" name="smokingDuration" value="no" class="mr-2" required>
                                     <label for="smokingDurationNo" class="text-gray-700">No</label>
                                 </div>
                             </div>
@@ -386,110 +389,110 @@
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Alguno/a tiene/tuvo Hipertensión Arterial (presión alta)?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarHipertensionSi" name="familiarHipertension" value="si" class="mr-2">
+                                    <input type="radio" id="familiarHipertensionSi" name="familiarHipertension" value="si" class="mr-2" required>
                                     <label for="familiarHipertensionSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarHipertensionNo" name="familiarHipertension" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarHipertensionNo" name="familiarHipertension" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarHipertensionNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarHipertensionNoSabe" name="familiarHipertension" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarHipertensionNoSabe" name="familiarHipertension" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarHipertensionNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Diabetes?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarDiabetesSi" name="familiarDiabetes" value="si" class="mr-2">
+                                    <input type="radio" id="familiarDiabetesSi" name="familiarDiabetes" value="si" class="mr-2" required>
                                     <label for="familiarDiabetesSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarDiabetesNo" name="familiarDiabetes" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarDiabetesNo" name="familiarDiabetes" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarDiabetesNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarDiabetesNoSabe" name="familiarDiabetes" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarDiabetesNoSabe" name="familiarDiabetes" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarDiabetesNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Problemas de adicciones (Alcohol, drogas, Tabaquismo, juego patológico? otros)?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarAdiccionesSi" name="familiarAdicciones" value="si" class="mr-2">
+                                    <input type="radio" id="familiarAdiccionesSi" name="familiarAdicciones" value="si" class="mr-2" required>
                                     <label for="familiarAdiccionesSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarAdiccionesNo" name="familiarAdicciones" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarAdiccionesNo" name="familiarAdicciones" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarAdiccionesNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarAdiccionesNoSabe" name="familiarAdicciones" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarAdiccionesNoSabe" name="familiarAdicciones" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarAdiccionesNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Obesidad?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarObesidadSi" name="familiarObesidad" value="si" class="mr-2">
+                                    <input type="radio" id="familiarObesidadSi" name="familiarObesidad" value="si" class="mr-2" required>
                                     <label for="familiarObesidadSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarObesidadNo" name="familiarObesidad" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarObesidadNo" name="familiarObesidad" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarObesidadNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarObesidadNoSabe" name="familiarObesidad" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarObesidadNoSabe" name="familiarObesidad" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarObesidadNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Depresión?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarDepresionSi" name="familiarDepresion" value="si" class="mr-2">
+                                    <input type="radio" id="familiarDepresionSi" name="familiarDepresion" value="si" class="mr-2" required>
                                     <label for="familiarDepresionSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarDepresionNo" name="familiarDepresion" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarDepresionNo" name="familiarDepresion" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarDepresionNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarDepresionNoSabe" name="familiarDepresion" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarDepresionNoSabe" name="familiarDepresion" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarDepresionNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">¿Violencia Familiar, conyugal, abusos de cualquier tipo?</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="familiarViolenciaAbusoSi" name="familiarViolenciaAbuso" value="si" class="mr-2">
+                                    <input type="radio" id="familiarViolenciaAbusoSi" name="familiarViolenciaAbuso" value="si" class="mr-2" required>
                                     <label for="familiarViolenciaAbusoSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="familiarViolenciaAbusoNo" name="familiarViolenciaAbuso" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarViolenciaAbusoNo" name="familiarViolenciaAbuso" value="no" class="ml-4 mr-2" required>
                                     <label for="familiarViolenciaAbusoNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="familiarViolenciaAbusoNoSabe" name="familiarViolenciaAbuso" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="familiarViolenciaAbusoNoSabe" name="familiarViolenciaAbuso" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="familiarViolenciaAbusoNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Cáncer de colon en familiares cercanos:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="colonCancerSi" name="colonCancer" value="si" class="mr-2">
+                                    <input type="radio" id="colonCancerSi" name="colonCancer" value="si" class="mr-2" required>
                                     <label for="colonCancerSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="colonCancerNo" name="colonCancer" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="colonCancerNo" name="colonCancer" value="no" class="ml-4 mr-2" required>
                                     <label for="colonCancerNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="colonCancerNoSabe" name="colonCancer" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="colonCancerNoSabe" name="colonCancer" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="colonCancerNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Cáncer de mama en familiares cercanos:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="breastCancerSi" name="breastCancer" value="si" class="mr-2">
+                                    <input type="radio" id="breastCancerSi" name="breastCancer" value="si" class="mr-2" required>
                                     <label for="breastCancerSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="breastCancerNo" name="breastCancer" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="breastCancerNo" name="breastCancer" value="no" class="ml-4 mr-2" required>
                                     <label for="breastCancerNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="breastCancerNoSabe" name="breastCancer" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="breastCancerNoSabe" name="breastCancer" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="breastCancerNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Cáncer de cuello uterino en familiares cercanos:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="cervicalCancerSi" name="cervicalCancer" value="si" class="mr-2">
+                                    <input type="radio" id="cervicalCancerSi" name="cervicalCancer" value="si" class="mr-2" required>
                                     <label for="cervicalCancerSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="cervicalCancerNo" name="cervicalCancer" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="cervicalCancerNo" name="cervicalCancer" value="no" class="ml-4 mr-2" required>
                                     <label for="cervicalCancerNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="cervicalCancerNoSabe" name="cervicalCancer" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="cervicalCancerNoSabe" name="cervicalCancer" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="cervicalCancerNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-gray-700 font-bold mb-2">Cáncer de próstata en familiares cercanos:</label>
                                 <div class="flex items-center">
-                                    <input type="radio" id="prostateCancerSi" name="prostateCancer" value="si" class="mr-2">
+                                    <input type="radio" id="prostateCancerSi" name="prostateCancer" value="si" class="mr-2" required>
                                     <label for="prostateCancerSi" class="text-gray-700">Sí</label>
-                                    <input type="radio" id="prostateCancerNo" name="prostateCancer" value="no" class="ml-4 mr-2">
+                                    <input type="radio" id="prostateCancerNo" name="prostateCancer" value="no" class="ml-4 mr-2" required>
                                     <label for="prostateCancerNo" class="text-gray-700">No</label>
-                                    <input type="radio" id="prostateCancerNoSabe" name="prostateCancer" value="no_sabe" class="ml-4 mr-2">
+                                    <input type="radio" id="prostateCancerNoSabe" name="prostateCancer" value="no_sabe" class="ml-4 mr-2" required>
                                     <label for="prostateCancerNoSabe" class="text-gray-700">No lo sabe</label>
                                 </div>
                             </div>
@@ -502,52 +505,12 @@
                                 </button>
                             </div>
 
-                            <div class="flex justify-center mt-8">
-                                <button id="showRecommendationsButton" class="hidden bg-primary hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium text-lg transition duration-300">
-                                    Ver Recomendaciones
-                                </button>
-                            </div>
-                        </div>
-                        <div id="resultsSection" class="hidden max-w-6xl mx-auto">
-                            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                                <div class="bg-primary p-8 text-center text-white">
-                                    <h2 class="text-3xl font-bold mb-4">Recomendaciones Preventivas Personalizadas</h2>
-                                    <p class="text-blue-100">Basado en sus datos y en las guías clínicas internacionales más actualizadas</p>
-                                </div>
                             
-                                    <div class="p-8">
-                                        <div class="bg-blue-50 rounded-lg p-6 mb-8">
-                                            <div class="flex flex-col md:flex-row justify-between items-center">
-                                                <div>
-                                                    <h3 class="text-xl font-semibold text-gray-800 mb-2" id="resultName">Nombre del usuario</h3>
-                                                    <div class="flex flex-wrap gap-4 text-sm">
-                                                        <span><i class="fas fa-id-card text-primary mr-1"></i> <span id="resultDNI">--</span></span>
-                                                        <span><i class="fas fa-birthday-cake text-primary mr-1"></i> <span id="resultAge">--</span> años</span>
-                                                        <span><i class="fas fa-venus-mars text-primary mr-1"></i> <span id="resultSex">--</span></span>
-                                                        <span><i class="fas fa-ruler-vertical text-primary mr-1"></i> <span id="resultHeight">--</span> cm</span>
-                                                        <span><i class="fas fa-weight text-primary mr-1"></i> <span id="resultWeight">--</span> kg</span>
-                                                        <span><i class="fas fa-calculator text-primary mr-1"></i> IMC: <span id="resultBMI">--</span> (<span id="resultBMICategory">--</span>)</span>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-4 md:mt-0">
-                                                    <button onclick="printRecommendations()" class="bg-white hover:bg-gray-100 text-primary border border-primary px-4 py-2 rounded-lg mr-2">
-                                                        <i class="fas fa-print mr-2"></i> Imprimir
-                                                    </button>
-                                                    <button onclick="saveRecommendations()" class="bg-secondary hover:bg-green-600 text-white px-4 py-2 rounded-lg">
-                                                        <i class="fas fa-save mr-2"></i> Guardar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                            
-                                        <div id="recommendationsByCategory" class="space-y-6">
+                                    <div id="recommendationsByCategory" class="space-y-6">
                                             </div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between mt-6">
-                                    <button type="button" id="prevBtn3" class="bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1">Anterior</button>
-                                    <button type="button" id="nextBtn3" class="bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1">Siguiente</button>
-                                </div>
+                                
                             </div>
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {

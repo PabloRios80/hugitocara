@@ -296,8 +296,8 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
                 "edad_desde": 40,
                 "edad_hasta": 80,
                 "sexo_biologico": "femenino",
-                "condicion1_campo": "Cancer de mama", // Antecedente familiar
-                "condicion1_valor": ["si"],
+                "condicion1_campo": null, // Antecedente familiar
+                "condicion1_valor": null,
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
@@ -309,27 +309,11 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "subcategoria": "Rastreo de cáncer de mama",
             "practica": "mamografia",
             "indicacion": {
-                "edad_desde": 40,
-                "edad_hasta": 80,
-                "sexo_biologico": "femenino",
-                "condicion1_campo": "Cancer de mama", // Antecedente familiar
-                "condicion1_valor": ["si"],
-                "condicion2_campo": null,
-                "condicion2_valor": null
-            },
-            "repeticion": "Según criterio médico (riesgo)",
-            "explicativo_id": "mamografia_riesgo_familiar" // Puedes crear un nuevo ID si es necesario
-            },
-            {
-            "categoria": "Prevención del cáncer",
-            "subcategoria": "Rastreo de cáncer de mama",
-            "practica": "mamografia",
-            "indicacion": {
                 "edad_desde": 50,
                 "edad_hasta": 80,
                 "sexo_biologico": "femenino",
-                "condicion1_campo": "Cancer de mama", // Sin antecedente familiar (implícito por la ausencia de condición)
-                "condicion1_valor": ["no"], // O podrías no tener esta condición y se aplicaría si la anterior no se cumple
+                "condicion1_campo": null, // Sin antecedente familiar (implícito por la ausencia de condición)
+                "condicion1_valor": null, // O podrías no tener esta condición y se aplicaría si la anterior no se cumple
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },

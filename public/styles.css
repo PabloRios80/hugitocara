@@ -163,3 +163,71 @@ header {
     color: #4a5568; /* Un gris oscuro para el título normal */
     margin-left: 0.5rem;
 }
+/* Validación visual */
+.border-red-500 {
+    border-color: #ef4444 !important;
+}
+
+.border-green-500 {
+    border-color: #10b981 !important;
+}
+
+/* Botones deshabilitados */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Efecto para campos válidos */
+input:valid, select:valid {
+    border-color: #10b981 !important;
+}
+
+/* Mejorar visibilidad de mensajes de error */
+.error-message {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Agrega esto a tu styles.css */
+.error-message {
+    display: block;
+    margin-top: 0.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilo para agrupar mensajes en radios */
+.radio-group-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.radio-group-container .error-message {
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+}
+/* Agrega esto a tu styles.css */
+input:invalid, select:invalid {
+    border-color: #ef4444 !important;
+}
+
+input:valid, select:valid {
+    border-color: #10b981 !important;
+}
+
+.radio-group-invalid {
+    outline: 2px solid #ef4444;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
