@@ -196,10 +196,10 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "edad_desde": 40,
             "edad_hasta": 100,
             "sexo_biologico": "Ambos",
-            "condicion1_campo": "Hipertension",
-            "condicion1_valor": ["si"], // Asegúrate de que los valores sean arrays
-            "condicion2_campo": "Diabetes",
-            "condicion2_valor": ["si"] 
+            "condicion1_campo": null,
+            "condicion1_valor": null, // Asegúrate de que los valores sean arrays
+            "condicion2_campo": null,
+            "condicion2_valor": null 
             },
             "repeticion": "Cada 1 años",
             "explicativo_id": "rastreo_de_erc_riesgo"
@@ -245,8 +245,8 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
                 "edad_desde": 40,
                 "edad_hasta": 80,
                 "sexo_biologico": "Ambos",
-                "condicion1_campo": "Cancer de colon", // Antecedente familiar
-                "condicion1_valor": ["si"],
+                "condicion1_campo": null, // Antecedente familiar
+                "condicion1_valor": null,
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
@@ -261,8 +261,8 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
                 "edad_desde": 50,
                 "edad_hasta": 80,
                 "sexo_biologico": "Ambos",
-                "condicion1_campo": "Cancer de colon", // Sin antecedente familiar (implícito)
-                "condicion1_valor": ["no"], // O podrías no tener esta condición
+                "condicion1_campo": null, // Sin antecedente familiar (implícito)
+                "condicion1_valor": null, // O podrías no tener esta condición
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },
@@ -273,22 +273,6 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "mensaje_previo": "Existen estudios previos de Colonoscopia (normal/patológico). Discutir con el profesional tratante la necesidad de repetirla."
         },
         {
-            "categoria": "Prevención del cáncer",
-            "subcategoria": "Rastreo de cáncer de colon",
-            "practica": "Sangre oculta en materia fecal (SOMF)",
-            "indicacion": {
-                "edad_desde": 50,
-                "edad_hasta": 80,
-                "sexo_biologico": "Ambos",
-                "condicion1_campo": "Cancer de colon", // Sin antecedente familiar (implícito)
-                "condicion1_valor": ["no"], // O podrías no tener esta condición
-                "condicion2_campo": null,
-                "condicion2_valor": null
-            }, 
-            "repeticion": "Anual (SOMF)",
-            "explicativo_id": "rastreo_colon_general" // Puedes crear un nuevo ID
-        },
-            {
             "categoria": "Prevención del cáncer",
             "subcategoria": "Rastreo de cáncer de mama",
             "practica": "ecografia mamaria",
@@ -303,8 +287,8 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             },
             "repeticion": "Según criterio médico (riesgo)",
             "explicativo_id": "ecografia_riesgo_familiar"
-            },
-            {
+        },
+        {
             "categoria": "Prevención del cáncer",
             "subcategoria": "Rastreo de cáncer de mama",
             "practica": "mamografia",
@@ -322,8 +306,8 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "antecedente_columna": "Cancer_mama_Mamografia",
             "antecedente_resultado_omitir": ["Normal", "Patologico"],
             "mensaje_previo": "Existen estudios previos de Mamografía (normal/patológico). Discutir con el profesional tratante la necesidad de repetirla."
-            },
-            {
+        },
+        {
             "categoria": "Prevención del cáncer",
             "subcategoria": "Rastreo de cáncer de próstata - PSA",
             "practica": "Prostata_PSA",
