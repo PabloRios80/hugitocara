@@ -2,69 +2,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const formSteps = document.querySelectorAll('.form-step');
     let currentStep = 0;
 
-    
-    // Función para validar todos los campos del paso actual
-    const validateCurrentStep = () => {
-        const currentStepElement = formSteps[currentStep];
-        let isValid = true;
+    // --- Funciones de Utilidad y Validaciones Específicas ---
 
-        // 1. Validar inputs de texto/select requeridos
-        const requiredInputs = currentStepElement.querySelectorAll(`
-            input[required]:not([type="radio"]), 
-            select[required],
-            textarea[required]
-        `);
-        
-        requiredInputs.forEach(input => {
-            if (!input.value.trim()) {
-                markAsInvalid(input);
-                isValid = false;
-            } else {
-                markAsValid(input);
-            }
-        });
- // 2. Validar TODOS los grupos de radio buttons en pasos 4, 5 y 6
-    if (currentStep >= 3) { // Pasos 4, 5 y 6 (índices 3, 4 y 5)
-        const radioGroups = {};
-        currentStepElement.querySelectorAll('input[type="radio"]').forEach(radio => {
-            const groupName = radio.name;
-            radioGroups[groupName] = radioGroups[groupName] || 
-                document.querySelector(`input[name="${groupName}"]:checked`);
-        });
-
-        for (const groupName in radioGroups) {
-            if (!radioGroups[groupName]) {
-                markRadioGroupAsInvalid(groupName);
-                isValid = false;
-            } else {
-                markRadioGroupAsValid(groupName);
-            }
-        }
-    }
-    
-        return isValid;
-    };
-
-    const markAsInvalid = (field) => {
+    const markAsInvalid = (field, message) => {
         field.classList.add('border-red-500');
         field.classList.remove('border-green-500');
-    
-        // Buscar mensaje existente primero
         let errorMsg = field.parentNode.querySelector('.error-message');
-    
         if (!errorMsg) {
             errorMsg = document.createElement('span');
             errorMsg.className = 'error-message text-red-500 text-sm mt-1 block';
-            errorMsg.textContent = 'Campo obligatorio';
             field.parentNode.appendChild(errorMsg);
         }
+        errorMsg.textContent = message;
     };
 
     const markAsValid = (field) => {
         field.classList.remove('border-red-500');
         field.classList.add('border-green-500');
-    
-        // Eliminar mensaje si existe
         const errorMsg = field.parentNode.querySelector('.error-message');
         if (errorMsg) {
             errorMsg.remove();
@@ -72,88 +26,126 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const markRadioGroupAsInvalid = (groupName) => {
-        const firstRadio = document.querySelector(`input[name="${groupName}"]`);
-        if (firstRadio) {
-            const container = firstRadio.closest('div');
-            if (container) {
-                // Buscar mensaje existente primero
-                let errorMsg = container.querySelector('.error-message');
-            
-                if (!errorMsg) {
-                    errorMsg = document.createElement('span');
-                    errorMsg.className = 'error-message text-red-500 text-sm mt-1 block';
-                    errorMsg.textContent = 'Seleccione una opción';
-                    container.appendChild(errorMsg);
+        const container = document.querySelector(`input[name="${groupName}"]`).closest('div');
+        let errorMsg = container.querySelector('.error-message');
+        if (!errorMsg) {
+            errorMsg = document.createElement('span');
+            errorMsg.className = 'error-message text-red-500 text-sm mt-1 block';
+            errorMsg.textContent = 'Seleccione una opción.';
+            container.appendChild(errorMsg);
+        }
+    };
+
+    const markRadioGroupAsValid = (groupName) => {
+        const container = document.querySelector(`input[name="${groupName}"]`).closest('div');
+        const errorMsg = container.querySelector('.error-message');
+        if (errorMsg) errorMsg.remove();
+    };
+
+    const validateDNI = (input) => /^\d{7,8}$/.test(input.value);
+    const validateBirthDate = (input) => {
+        const dateRegex = /^(0[1-9]|[1-2][0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4}$/;
+        if (!dateRegex.test(input.value)) return false;
+        const [day, month, year] = input.value.split('/').map(Number);
+        const date = new Date(year, month - 1, day);
+        const today = new Date();
+        return date <= today && !isNaN(date.getTime()) && date.getDate() === day;
+    };
+    const validateEmail = (input) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    const validatePhone = (input) => /^\d{10,11}$/.test(input.value.replace(/[\s()-]/g, ''));
+    const validateHeight = (input) => {
+        const height = parseFloat(input.value);
+        return !isNaN(height) && height >= 50 && height <= 300;
+    };
+    const validateWeight = (input) => {
+        const weight = parseFloat(input.value);
+        return !isNaN(weight) && weight >= 10 && weight <= 300;
+    };
+
+    // --- Funciones del Formulario ---
+
+    const validateAndMarkFields = () => {
+        const currentStepElement = formSteps[currentStep];
+        let isValid = true;
+
+        // Validar campos de texto y select
+        const requiredInputs = currentStepElement.querySelectorAll(`
+            input[required]:not([type="radio"]), 
+            select[required],
+            textarea[required]
+        `);
+        
+        requiredInputs.forEach(input => {
+            let fieldIsValid = true;
+            if (!input.value.trim()) {
+                markAsInvalid(input, 'Este campo es obligatorio.');
+                fieldIsValid = false;
+            } else {
+                switch (input.id) {
+                    case 'dni':
+                        if (!validateDNI(input)) { markAsInvalid(input, 'El DNI debe tener 7 u 8 dígitos.'); fieldIsValid = false; }
+                        break;
+                    case 'birthDate':
+                        if (!validateBirthDate(input)) { markAsInvalid(input, 'Formato o fecha inválida (dd/mm/yyyy).'); fieldIsValid = false; }
+                        break;
+                    case 'email':
+                        if (!validateEmail(input)) { markAsInvalid(input, 'Formato de correo inválido.'); fieldIsValid = false; }
+                        break;
+                    case 'phone':
+                        if (!validatePhone(input)) { markAsInvalid(input, 'Formato de teléfono inválido (10-11 dígitos).'); fieldIsValid = false; }
+                        break;
+                    case 'height':
+                        if (!validateHeight(input)) { markAsInvalid(input, 'Altura debe ser entre 50 y 300 cm.'); fieldIsValid = false; }
+                        break;
+                    case 'weight':
+                        if (!validateWeight(input)) { markAsInvalid(input, 'Peso debe ser entre 10 y 300 kg.'); fieldIsValid = false; }
+                        break;
                 }
             }
-        }
-    };
-    const markRadioGroupAsValid = (groupName) => {
-        const firstRadio = document.querySelector(`input[name="${groupName}"]`);
-        if (firstRadio) {
-            const container = firstRadio.closest('div');
-            if (container) {
-                const errorMsg = container.querySelector('.error-message');
-                if (errorMsg) errorMsg.remove();
+            if (fieldIsValid) {
+                markAsValid(input);
             }
+            if (!fieldIsValid) {
+                isValid = false;
+            }
+        });
+
+        // Validar grupos de radio buttons (a partir del paso 3)
+        if (currentStep >= 2) {
+            const radioGroups = new Set();
+            currentStepElement.querySelectorAll('input[type="radio"]').forEach(radio => {
+                const groupName = radio.name;
+                if (groupName) radioGroups.add(groupName);
+            });
+            
+            radioGroups.forEach(groupName => {
+                const checkedRadio = document.querySelector(`input[name="${groupName}"]:checked`);
+                const smokingStatus = document.querySelector('input[name="smokingStatus"]:checked');
+                
+                // Excepción para "duración de fumador" si "nunca fumó"
+                if (groupName === 'smokingDuration' && smokingStatus && smokingStatus.value === 'nunca') {
+                    markRadioGroupAsValid(groupName);
+                    return;
+                }
+                
+                if (!checkedRadio) {
+                    markRadioGroupAsInvalid(groupName);
+                    isValid = false;
+                } else {
+                    markRadioGroupAsValid(groupName);
+                }
+            });
         }
+        
+        return isValid;
     };
-  // Mostrar paso actual
+
     const showStep = (step) => {
         formSteps.forEach((s, index) => {
             s.classList.toggle('hidden', index !== step);
         });
-        
         updateProgress();
         updateNavigationButtons();
-        
-        // Nueva función para forzar validación al cambiar de paso
-        validateOnStepChange();
-    };
-
-    
-    // Nueva función para validar campos al mostrar el paso
-    const validateOnStepChange = () => {
-        const currentStepElement = formSteps[currentStep];
-        
-        // Validar inputs normales
-        currentStepElement.querySelectorAll(`
-            input[required]:not([type="radio"]), 
-            select[required],
-            textarea[required]
-        `).forEach(input => {
-            if (!input.value.trim()) {
-                markAsInvalid(input);
-            } else {
-                markAsValid(input);
-            }
-        });
-
-        // Validar radio groups
-        const radioGroups = {};
-        currentStepElement.querySelectorAll('input[type="radio"]').forEach(radio => {
-            const groupName = radio.name;
-            const groupHasRequired = currentStepElement.querySelector(`input[name="${groupName}"][required]`);
-            if (groupHasRequired) {
-                radioGroups[groupName] = radioGroups[groupName] || 
-                    document.querySelector(`input[name="${groupName}"]:checked`);
-            }
-        });
-
-        for (const groupName in radioGroups) {
-            if (!radioGroups[groupName]) {
-                markRadioGroupAsInvalid(groupName);
-            } else {
-                markRadioGroupAsValid(groupName);
-            }
-        }
-    };
-
-    const updateNavigationButtons = () => {
-        const nextButtons = document.querySelectorAll('[id^="nextBtn"]');
-        nextButtons.forEach(btn => {
-            btn.disabled = !validateCurrentStep();
-        });
     };
 
     const updateProgress = () => {
@@ -162,10 +154,19 @@ document.addEventListener('DOMContentLoaded', function() {
             progress.style.width = `${((currentStep + 1) / formSteps.length) * 100}%`;
         }
     };
- // Event listeners modificados
+    
+    const updateNavigationButtons = () => {
+        const nextButtons = document.querySelectorAll('[id^="nextBtn"]');
+        nextButtons.forEach(btn => {
+            btn.disabled = !validateAndMarkFields();
+        });
+    };
+
+    // --- Event Listeners ---
+
     document.querySelectorAll('[id^="nextBtn"]').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            if (!validateCurrentStep()) {
+            if (!validateAndMarkFields()) {
                 e.preventDefault();
                 return;
             }
@@ -185,17 +186,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Validación en tiempo real
-    document.querySelectorAll('input, select').forEach(field => {
+    document.querySelectorAll('input, select, textarea').forEach(field => {
         field.addEventListener('input', updateNavigationButtons);
         if (field.type === 'radio') {
             field.addEventListener('change', updateNavigationButtons);
         }
     });
 
-    // Inicialización
+    // --- Inicialización ---
+
     showStep(currentStep);
-    updateNavigationButtons(); // Esta línea es crucial para el estado inicial
-    // Nueva validación inicial forzada
-    validateOnStepChange();
 });
