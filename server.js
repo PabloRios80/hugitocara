@@ -65,7 +65,7 @@ app.get('/getPreventivePlan/:dni', async (req, res) => {
         const userDataRow = rowsHoja1.slice(1).find(row => {
             const rowData = Object.fromEntries(headersHoja1.map((header, index) => [header, row[index]]));
             // ⚠️ La corrección clave: usar trim() para eliminar espacios ⚠️
-            return rowData['DNI'].trim() === dni.trim();
+            return rowData['DNI'] && rowData['DNI'].trim() === dni.trim();
         });
 
         if (!userDataRow) {
@@ -86,8 +86,8 @@ app.get('/getPreventivePlan/:dni', async (req, res) => {
             const headersHoja2 = rowsHoja2[0].map(header => header.trim());
             const userPreviousStudiesRow = rowsHoja2.slice(1).find(row => {
                 const rowData = Object.fromEntries(headersHoja2.map((header, index) => [header, row[index]]));
-                // ⚠️ La corrección clave: usar trim() para eliminar espacios ⚠️
-                return rowData['DNI'].trim() === dni.trim();
+                // ✅ CORRECCIÓN: Verifica si la celda de DNI existe antes de usar trim()
+                return rowData['DNI'] && rowData['DNI'].trim() === dni.trim();
             });
 
             if (userPreviousStudiesRow) {
@@ -186,7 +186,7 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
             "explicativo_id": "rastreo_de_hipertension_mayor40"
         },
         {
-            "categoria": "Prevención de enfermedades crónicas y riesgo cardiovascular",
+            "categoria": "Prevención de   enfermedades crónicas y riesgo cardiovascular",
             "subcategoria": "Rastreo enfermedad renal cronica (ERC)",
             "practica": [
             "creatinina",
@@ -706,7 +706,6 @@ tablaRecomendaciones.forEach(rec => {
 // =========================================================================
 // LÓGICA DEL SERVIDOR PRINCIPAL (SERVER.JS ORIGINAL) UNIFICADA
 // =========================================================================
-
 async function saveDataToSheet(data) {
     let authConfig = {};
 
@@ -726,15 +725,57 @@ async function saveDataToSheet(data) {
     const client = await auth.getClient();
     const googleSheets = google.sheets({ version: 'v4', auth: client });
 
+    // ✅ Paso 1: Limpiar el DNI antes de crear el array de valores
+    const dniLimpio = data.DNI.replace(/^'/, ''); 
+
+    // ✅ Paso 2: Crear un array con los valores del formulario en el orden exacto de las columnas
+    const valoresDeFila = [
+        dniLimpio,
+        data.Fecha_de_Nacimiento,
+        data.Apellido,
+        data.Nombre,
+        data.Edad,
+        data.Email,
+        data.Telefono,
+        data.Sexo_biologico,
+        data.Genero_autopercibido,
+        data.Altura,
+        data.Peso,
+        data.BMI,
+        data.Categoria_BMI,
+        data.Hipertension,
+        data.Diabetes,
+        data.Colesterol,
+        data.Depresion,
+        data.Actividad_fisica,
+        data.sedentarismo,
+        data.Abuso_alcohol_y_o_drogas,
+        data.Stress,
+        data.Exceso_preocupacion_salud,
+        data.Exceso_pantalla,
+        data.Fuma,
+        data.Fumador_cronico,
+        data.Hipertension_familiar,
+        data.Diabetes_familiar,
+        data.Adicciones_familiar,
+        data.Obesidad_familiar,
+        data.Depresion_familiar,
+        data.Violencia_familiar,
+        data.Cancer_de_colon,
+        data.Cancer_de_mama,
+        data.Cancer_cuello_utero,
+        data.Cancer_de_prostata,
+    ];
+
     const resource = {
-        values: [Object.values(data)],
+        values: [valoresDeFila],
     };
 
     try {
         await googleSheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: 'Hoja 1',
-            valueInputOption: 'RAW',
+            valueInputOption: 'USER_ENTERED',
             resource,
         });
         console.log('Datos guardados correctamente.');
