@@ -107,6 +107,46 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
         html += `</div>`; // Cierre del contenedor principal
+
         resultadosDiv.innerHTML = html;
+     // CREAR BOTÓN CON ESTILOS INLINE (para asegurar que se vea bien)
+    const volverButton = document.createElement('div');
+    volverButton.style.textAlign = 'center';
+    volverButton.style.marginTop = '2rem';
+    volverButton.style.marginBottom = '1.5rem';
+    
+    volverButton.innerHTML = `
+        <button id="volverBtn" style="
+            background-color: #3b82f6; 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: none; 
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        " onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">
+            ← Volver al Inicio
+        </button>
+    `;
+    
+    // Insertar el botón antes del footer
+    const footer = document.querySelector('footer');
+    if (footer) {
+        footer.parentNode.insertBefore(volverButton, footer);
+    } else {
+        // Si no encuentra footer, agregarlo al final del main
+        document.querySelector('main').appendChild(volverButton);
+    }
+        
+        
+        
+        // Configurar el evento para el botón Volver
+        const volverBtn = document.getElementById('volverBtn');
+        if (volverBtn) {
+            volverBtn.addEventListener('click', function() {
+                window.location.href = 'index.html'; // Cambia por el nombre de tu página inicial
+            });
+        }
     }
 });
