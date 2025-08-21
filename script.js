@@ -26,8 +26,20 @@ async function guardarDatosFormulario() {
     const stress_ansiedad = document.querySelector('input[name="stressAnxietyExcessive"]:checked').value;
     const preocupacion_salud = document.querySelector('input[name="healthConcernExcessive"]:checked').value;
     const abuso_pantallas = document.querySelector('input[name="screenTimeExcessive"]:checked').value;
-    const tabaquismo = document.querySelector('input[name="smokingStatus"]:checked').value;
-    const fumador_cronico = document.querySelector('input[name="smokingDuration"]:checked').value;
+
+    const tabaquismoElement = document.querySelector('input[name="smokingStatus"]:checked');
+    const tabaquismo = tabaquismoElement ? tabaquismoElement.value : '';
+
+     let fumador_cronico = 'No aplica'; // Valor por defecto
+
+    // Solo buscar fumador_cronico si es fumador o ex-fumador
+    if (tabaquismo === 'Sí' || tabaquismo === 'Ex fumador') {
+        const fumadorCronicoElement = document.querySelector('input[name="smokingDuration"]:checked');
+        if (fumadorCronicoElement) {
+        fumador_cronico = fumadorCronicoElement.value;
+        }
+    }
+
     const hipertension_familiar = document.querySelector('input[name="familiarHipertension"]:checked').value;
     const diabetes_familiar = document.querySelector('input[name="familiarDiabetes"]:checked').value;
     const adicciones_familiar = document.querySelector('input[name="familiarAdicciones"]:checked').value;
@@ -39,7 +51,6 @@ async function guardarDatosFormulario() {
     const cancer_de_cuello_utero = document.querySelector('input[name="cervicalCancer"]:checked').value;
     const cancer_de_prostata = document.querySelector('input[name="prostateCancer"]:checked').value;
     
-
     const formData = {
         'DNI': DNI, // Clave en castellano
         'Fecha de Nacimiento': fechaDeNacimiento, 
