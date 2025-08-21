@@ -484,7 +484,7 @@ function generatePreventivePlan(userData, previousStudiesData = {}) {
                 "edad_hasta": 100,
                 "sexo_biologico": "Ambos",
                 "condicion1_campo": "Fuma",
-                "condicion1_valor": ["menos_de_10", "entre_10_y_20", "mas_de_20", "ex-fumador"],
+                "condicion1_valor": ["menos_de_10", "entre_10_y_20", "mas_de_20", "ex-fumador", "ex_fumador"],
                 "condicion2_campo": null,
                 "condicion2_valor": null
             },

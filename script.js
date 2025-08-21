@@ -26,8 +26,12 @@ async function guardarDatosFormulario() {
     const stress_ansiedad = document.querySelector('input[name="stressAnxietyExcessive"]:checked').value;
     const preocupacion_salud = document.querySelector('input[name="healthConcernExcessive"]:checked').value;
     const abuso_pantallas = document.querySelector('input[name="screenTimeExcessive"]:checked').value;
-    const tabaquismo = document.querySelector('input[name="smokingStatus"]:checked').value;
-    const fumador_cronico = document.querySelector('input[name="smokingDuration"]:checked').value;
+    const smokingStatusEl = document.querySelector('input[name="smokingStatus"]:checked');
+    const tabaquismo = smokingStatusEl ? smokingStatusEl.value : '';
+    const smokingDurationEl = document.querySelector('input[name="smokingDuration"]:checked');
+    const fumador_cronico = (smokingStatusEl && smokingStatusEl.value === 'nunca')
+        ? 'no_aplica'
+        : (smokingDurationEl ? smokingDurationEl.value : '');
     const hipertension_familiar = document.querySelector('input[name="familiarHipertension"]:checked').value;
     const diabetes_familiar = document.querySelector('input[name="familiarDiabetes"]:checked').value;
     const adicciones_familiar = document.querySelector('input[name="familiarAdicciones"]:checked').value;
