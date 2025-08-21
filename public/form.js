@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Habilitar/Deshabilitar la pregunta condicional de duración según tabaquismo
+    const smokingStatusRadios = document.querySelectorAll('input[name="smokingStatus"]');
+    const smokingDurationRadios = document.querySelectorAll('input[name="smokingDuration"]');
+    const toggleSmokingDurationRequired = () => {
+        const selected = document.querySelector('input[name="smokingStatus"]:checked');
+        const isNever = selected && selected.value === 'nunca';
+        smokingDurationRadios.forEach(r => {
+            r.required = !isNever;
+            if (isNever) r.checked = false;
+        });
+    };
+    if (smokingStatusRadios.length) {
+        smokingStatusRadios.forEach(r => r.addEventListener('change', toggleSmokingDurationRequired));
+        toggleSmokingDurationRequired();
+    }
     const formSteps = document.querySelectorAll('.form-step');
     let currentStep = 0;
 

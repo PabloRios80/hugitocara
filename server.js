@@ -5,11 +5,20 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 
+// Servir archivos estáticos sin caché para evitar versiones obsoletas en el navegador
+const noCacheStaticOptions = {
+    etag: false,
+    maxAge: 0,
+    setHeaders: (res) => {
+        res.set('Cache-Control', 'no-store');
+    }
+};
+
 // Servir archivos estáticos desde la raíz del proyecto
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, noCacheStaticOptions));
 
 // Servir archivos estáticos desde la carpeta 'public'
-app.use(express.static('public'));
+app.use(express.static('public', noCacheStaticOptions));
 
 // =========================================================================
 // LÓGICA DEL SERVIDOR DE RECOMENDACIONES (PREVENTIVE_BACKEND.JS) UNIFICADA
