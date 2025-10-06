@@ -707,6 +707,7 @@ tablaRecomendaciones.forEach(rec => {
 // LÓGICA DEL SERVIDOR PRINCIPAL (SERVER.JS ORIGINAL) UNIFICADA
 // =========================================================================
 async function saveDataToSheet(data) {
+    data['Fecha Carga'] = new Date();
     let authConfig = {};
 
     if (process.env.CREDENTIALS_JSON) {
@@ -762,7 +763,8 @@ async function saveDataToSheet(data) {
         data['Cancer de colon'],
         data['Cancer de mama'],
         data['Cancer cuello utero'],
-        data['Cancer de prostata']
+        data['Cancer de prostata'],
+        data['Fecha Carga']
     ];
 
     const resource = {
