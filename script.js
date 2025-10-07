@@ -73,7 +73,7 @@ async function guardarDatosFormulario() {
         'Colesterol': colesterol,
         'Depresion': depresion,
         'Actividad fisica': actividad_fisica,
-        'Sedentarismo': sedentarismo,
+        'sedentarismo': sedentarismo,
         'Abuso alcohol y/o drogas': abuso_alcohol_otros,
         'Stress': stress_ansiedad,
         'Exceso preocupacion salud': preocupacion_salud,
