@@ -9,13 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return urlParams.get('dni');
     }
 
-    // Si el DNI está en la URL, lo precargamos
-    const dniDesdeUrl = getDniFromUrl();
-    if (dniDesdeUrl) {
-        dniInput.value = dniDesdeUrl;
-        buscarRecomendaciones(dniDesdeUrl); // Buscar automáticamente al cargar
-    }
-
     // Evento para el botón "Buscar Recomendaciones"
     buscarBtn.addEventListener('click', function() {
         const dni = dniInput.value;

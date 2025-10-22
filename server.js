@@ -1,6 +1,7 @@
 const express = require('express');
 const { google } = require('googleapis');
 require('dotenv').config();
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(express.json());
@@ -784,14 +785,85 @@ async function saveDataToSheet(data) {
         throw error;
     }
 }
+// EN TU server.js DE HUGITOCARA
 
 app.post('/saveData', async (req, res) => {
-    try {
-        await saveDataToSheet(req.body);
-        res.send('Datos guardados correctamente.');
-    } catch (error) {
-        res.status(500).send('Error al guardar datos.');
+  // 1. Recibimos los datos del formulario en el formato ANTIGUO
+  const formDataAntiguo = req.body;
+  const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL; 
+
+  try {
+    // --- TAREA 1: GUARDADO PRINCIPAL (EN HOJA ANTIGUA) ---
+    await saveDataToSheet(formDataAntiguo);
+    res.send('Datos guardados correctamente.');
+
+  } catch (error) {
+    // Si falla el guardado principal, detenemos y avisamos.
+    console.error("Error CRÍTICO al guardar en la hoja antigua:", error);
+    return res.status(500).send('Error al guardar datos.');
+  }
+
+  // --- TAREA 2: DUPLICADO EN HOJA NUEVA (EN SEGUNDO PLANO) ---
+  // Se ejecuta después de responder al usuario, de forma segura.
+  try {
+    
+    // --- TU TRADUCTOR CORREGIDO (CLAVE IZQUIERDA = DESTINO, DERECHA = ORIGEN) ---
+    const formDataNuevo = {
+        'DNI': formDataAntiguo['DNI'],
+        'Fecha_Nacimiento': formDataAntiguo['Fecha de Nacimiento'],
+        'Apellido': formDataAntiguo['Apellido'],
+        'Nombre': formDataAntiguo['Nombre'],
+        'Edad': formDataAntiguo['Edad'],
+        'Email': formDataAntiguo['Email'],
+        'Telefono': formDataAntiguo['Telefono'],
+        'Sexo_biologico': formDataAntiguo['Sexo biologico'],
+        'Genero_autopercibido': formDataAntiguo['Genero autopercibido'],
+        'Altura': formDataAntiguo['Altura'],
+        'Peso': formDataAntiguo['Peso'],
+        'BMI': formDataAntiguo['BMI'],
+        'Categoria_BMI': formDataAntiguo['Categoria BMI'],
+        'Hipertension': formDataAntiguo['Hipertension'],
+        'Diabetes': formDataAntiguo['Diabetes'],
+        'Colesterol': formDataAntiguo['Colesterol'],
+        'Depresion': formDataAntiguo['Depresion'],
+        'Actividad fisica': formDataAntiguo['Actividad fisica'], // Dejamos el espacio si la hoja de destino lo tiene
+        'sedentarismo': formDataAntiguo['sedentarismo'],
+        'Abuso_alcohol_drogas': formDataAntiguo['Abuso alcohol y/o drogas'],
+        'Stress': formDataAntiguo['Stress'],
+        'Exceso_preocupacion_salud': formDataAntiguo['Exceso preocupacion salud'],
+        'Exceso_pantalla': formDataAntiguo['Exceso pantallas'],
+        'Fuma': formDataAntiguo['Fuma'],
+        'Fumador_cronico': formDataAntiguo['Fumador cronico'],
+        'Hipertension_familiar': formDataAntiguo['Hipertension familiar'],
+        'Diabetes_familiar': formDataAntiguo['Diabetes familiar'],
+        'Adicciones_familiar': formDataAntiguo['Adicciones familiar'],
+        'Obesidad_familiar': formDataAntiguo['Obesidad familiar'], // Dejamos el espacio si la hoja de destino lo tiene
+        'Depresion_familiar': formDataAntiguo['Depresion familiar'],
+        'Violencia_familiar': formDataAntiguo['Violencia familiar'],
+        'Cancer_de_colon': formDataAntiguo['Cancer de colon'],
+        'Cancer_de_mama': formDataAntiguo['Cancer de mama'],
+        'Cancer_cuello_utero': formDataAntiguo['Cancer cuello utero'],
+        'Cancer_de_prostata': formDataAntiguo['Cancer de prostata'],
+        'fecha_carga': formDataAntiguo['Fecha Carga']
+    };
+    
+    // Llamamos a nuestra API de Apps Script con los datos traducidos
+    const apiResponse = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'guardarHojaDeVida', payload: formDataNuevo })
+    });
+
+    if (!apiResponse.ok) {
+        const errorData = await apiResponse.json();
+        throw new Error(errorData.message);
     }
+
+    console.log(`Dato del DNI ${formDataNuevo.DNI} duplicado exitosamente en la nueva hoja.`);
+
+  } catch (error) {
+    console.error(`ERROR al duplicar dato en la nueva hoja:`, error.message);
+  }
 });
 
 app.post('/checkDNI', async (req, res) => {

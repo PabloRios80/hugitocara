@@ -63,11 +63,8 @@ async function guardarDatosFormulario() {
         'Genero autopercibido': genero_autopercibido,
         'Altura': altura,
         'Peso': peso,
-
         'BMI': bmiValor,         // Valor del IMC tomado del HTML
         'Categoria BMI': bmiCategoria,
-
-
         'Hipertension': hipertension,
         'Diabetes': diabetes,
         'Colesterol': colesterol,
@@ -102,7 +99,7 @@ async function guardarDatosFormulario() {
         if (response.ok) {
             alert('Datos guardados correctamente.');
             // Redirigir a la nueva página para ver recomendaciones, pasando el DNI como parámetro
-            window.location.href = `ver_recomendaciones.html?dni=${DNI}`;
+            window.location.href = 'ver_recomendaciones.html';
         } else {
             alert('Error al guardar datos. Inténtalo de nuevo.');
         }
